@@ -45,7 +45,7 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.2.0-alpha08"
     implementation("com.squareup.okio:okio:2.8.0")
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
 }

@@ -30,7 +30,7 @@ publishing {
             artifact androidJavadocsJar
             artifact androidSourcesJar
 
-            artifact("$buildDir/outputs/aar/tweedle-release.aar")
+            artifact("$buildDir/outputs/aar/lib-release.aar")
             groupId 'com.tycz'
             artifactId 'tweedle'
             version '0.1.0'
