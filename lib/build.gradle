@@ -33,7 +33,7 @@ publishing {
             artifact("$buildDir/outputs/aar/lib-release.aar")
             groupId 'com.tycz'
             artifactId 'tweedle'
-            version '0.1.0'
+            version '0.1.1'
 
             //The publication doesn't know about our dependencies, so we have to manually add them to the pom
             pom.withXml {
@@ -68,7 +68,7 @@ bintray {
         vcsUrl = 'https://github.com/tyczj/tweedle.git'
 
         version {
-            name = '0.1.0'
+            name = '0.1.1'
             released = new Date()
         }
     }
