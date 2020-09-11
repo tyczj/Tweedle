@@ -1,8 +1,16 @@
 package com.tycz.android.twitter.api.v2
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import com.tycz.tweedle.lib.api.Response
+import com.tycz.tweedle.lib.dtos.tweet.Add
+import com.tycz.tweedle.lib.dtos.tweet.rules.Delete
+import com.tycz.tweedle.lib.dtos.tweet.rules.DeleteRule
+import com.tycz.tweedle.lib.dtos.tweet.rules.Rule
+import com.tycz.tweedle.lib.tweets.stream.filter.Filter
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -10,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val model: MainViewModel by viewModels()
+
+        // Add your own Authorization token then uncomment the different sections to see example usage
 
         val token = ""
         //region Get Single Tweet
@@ -71,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         //endregion
 
         //region Recent Tweets
-        //        val map = HashMap<String, String>()
+//                val map = HashMap<String, String>()
 //        map["tweet.fields"] = "lang"
 //        map["expansions"] = "attachments.media_keys"
 //        map["media.fields"] = "preview_image_url,url"
