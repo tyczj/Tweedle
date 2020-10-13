@@ -2,6 +2,8 @@
 
 ***Library is currently in alpha and the API might change as the Twitter v2 API changes***
 
+[![v2](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api)
+
 [![Build Status](https://travis-ci.org/tyczj/Tweedle.svg)](https://travis-ci.org/github/tyczj/Tweedle)
 [![Download](https://api.bintray.com/packages/tyczj359/Tweedle/lib/images/download.svg) ](https://bintray.com/tyczj359/Tweedle/lib/_latestVersion)
 
