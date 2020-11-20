@@ -32,12 +32,10 @@ class MainActivity : AppCompatActivity() {
 //        })
         //endregion
 
-//        DisneyMustPay
-//        CancelStudentDebt
         //region Add Rule
 //        val filters:MutableList<Add> = mutableListOf()
 //        val filter: Filter = Filter.Builder()
-//            .addOperator("#DisneyMustPay")
+//            .addOperator("#SundayMorning")
 //            .and()
 //            .setLanguage(Filter.ENGLISH)
 //            .build()
@@ -56,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         //region Delete Rule
 //        val filter: Filter = Filter.Builder()
-//            .addOperator("#MAGAMillionMarch")
+//            .addOperator("#SundayMorning")
 //            .and()
 //            .setLanguage(Filter.ENGLISH)
 //            .build()
@@ -77,6 +75,9 @@ class MainActivity : AppCompatActivity() {
 //        model.getStreamTweets(token).observe(this, Observer {
 //            when(it){
 //                is Response.Success -> Log.d("TWEET", it.data.data.text)
+//                is Response.Error -> {
+//                    Log.d("Error", it.exception.message!!)
+//                }
 //            }
 //        })
 //
