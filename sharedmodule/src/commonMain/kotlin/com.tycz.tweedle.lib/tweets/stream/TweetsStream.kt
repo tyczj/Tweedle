@@ -110,6 +110,7 @@ class TweetsStream {
                     if (concatString.isNotBlank()) {
                         concatString += delimitedTweets[0]
                         delimitedTweets[0] = concatString
+                        concatString = ""
                     }
 
                     if (!delimitedTweets[delimitedTweets.lastIndex].endsWith("}]}")) {
@@ -131,7 +132,8 @@ class TweetsStream {
     }
 
     /**
-     * The sampled stream endpoint returns, in real-time, roughly a 1% sample of all public Tweets.
+     * The sampled stream endpoint delivers a roughly 1% random sample of publicly available Tweets in real-time.
+     * With it, you can identify and track trends, monitor general sentiment, monitor global events, and much more.
      *
      * Make sure to call closeStream() when done streaming
      *
@@ -160,6 +162,7 @@ class TweetsStream {
                     if (concatString.isNotBlank()) {
                         concatString += delimitedTweets[0]
                         delimitedTweets[0] = concatString
+                        concatString = ""
                     }
 
                     if (!delimitedTweets[delimitedTweets.lastIndex].endsWith("}]}")) {
@@ -180,8 +183,7 @@ class TweetsStream {
     }
 
     /**
-     * The sampled stream endpoint delivers a roughly 1% random sample of publicly available Tweets in real-time.
-     * With it, you can identify and track trends, monitor general sentiment, monitor global events, and much more.
+     * Parses a given list of json strings and deserializes them
      */
     private fun parseStreamResponseString(response: List<String>): List<SingleTweetPayload> {
 
