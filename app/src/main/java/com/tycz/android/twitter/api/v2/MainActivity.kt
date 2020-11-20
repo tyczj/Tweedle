@@ -88,23 +88,27 @@ class MainActivity : AppCompatActivity() {
         //endregion
 
         //region Recent Tweets
-//        val map = HashMap<String, String>()
-//        map["tweet.fields"] = "lang"
-//        map["expansions"] = "attachments.media_keys"
-//        map["media.fields"] = "preview_image_url,url"
-//
-//        model.getRecentTweets(
-//            token,
-//            "from:TwitterDev",
-//            map
-//        ).observe(this, Observer {
-//            when (it) {
-//                is Response.Error -> {
-//                    it.exception
-//                }
-//                is Response.Success -> it.data!!.data[0]
-//            }
-//        })
+        val map = HashMap<String, String>()
+        map["tweet.fields"] = "lang"
+        map["expansions"] = "attachments.media_keys"
+        map["media.fields"] = "preview_image_url,url"
+
+        val filter: Filter = Filter.Builder()
+            .addOperator("from:TwitterDev")
+            .build()
+
+        model.getRecentTweets(
+            token,
+            filter.filter,
+            map
+        ).observe(this, Observer {
+            when (it) {
+                is Response.Error -> {
+                    it.exception
+                }
+                is Response.Success -> it.data!!.data[0]
+            }
+        })
         //endregion
 
     }

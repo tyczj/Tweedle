@@ -188,10 +188,10 @@ class TweetsStream {
     private fun parseStreamResponseString(response: List<String>): List<SingleTweetPayload> {
 
         val tweets: MutableList<SingleTweetPayload> = mutableListOf()
+        val format = Json { ignoreUnknownKeys = true }
         response.forEach { tweetData ->
             if (tweetData.isNotEmpty()) {
                 try {
-                    val format = Json { ignoreUnknownKeys = true }
                     val convertedPayload: SingleTweetPayload? =
                         format.decodeFromString<SingleTweetPayload>(tweetData)
                     convertedPayload?.let { tweetObject ->
