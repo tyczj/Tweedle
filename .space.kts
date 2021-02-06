@@ -10,8 +10,8 @@ job("Build and publish") {
         env["PASSWORD"] = Secrets("maven-password")
         
         kotlinScript { api ->
-            api.gradle("build")
-            api.gradle("publish)
+            api.gradle(":sharedmodule:build")
+            api.gradle(":sharedmodule:publish)
         }
     }
 }
