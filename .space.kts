@@ -11,7 +11,7 @@ job("Build and publish") {
         
         kotlinScript { api ->
             api.gradle(":sharedmodule:build")
-            api.gradle(":sharedmodule:publish)
+            api.gradle(":sharedmodule:publish")
         }
     }
 }
