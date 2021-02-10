@@ -1,3 +1,4 @@
 include ':sharedmodule'
 include ':app'
-rootProject.name = "Android Twitter Api"
+rootProject.name = "tweedle"
+enableFeaturePreview('GRADLE_METADATA')

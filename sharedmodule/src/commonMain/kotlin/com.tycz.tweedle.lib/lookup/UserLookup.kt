@@ -19,19 +19,17 @@ class UserLookup {
      * @param token Authorization token
      * @param userId User id of the user
      *
-     * @return Returns a flow with the response and the payload
+     * @return Returns a user Payload in a Response
      */
-    fun getUserById(token:String, userId:Long) = flow {
+    suspend fun getUserById(token:String, userId:Long):Response<Payload?> {
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId"
             val payload = _client.get<Payload>(token, url)
             Response.Success(payload)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 
     /**
@@ -39,19 +37,17 @@ class UserLookup {
      * @param token Authorization token
      * @param userIds List of users ids for the users to get
      *
-     * @return Returns a flow with the response and its payload
+     * @return Returns a list of user Payload's in a Response
      */
-    fun getUsersByIds(token:String, userIds:List<Long>) = flow {
+    suspend fun getUsersByIds(token:String, userIds:List<Long>):Response<List<Payload>?> {
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}?ids=${userIds.joinToString(",","","",100)}"
             val users = _client.get<List<Payload>>(token, url)
             Response.Success(users)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 
     /**
@@ -59,19 +55,17 @@ class UserLookup {
      * @param token Authorization token
      * @param username The username of the user to get
      *
-     * @return Returns a flow with the response and its payload
+     * @return Returns a user Payload in a Response
      */
-    fun getUserByUsername(token:String, username:String) = flow {
+    suspend fun getUserByUsername(token:String, username:String): Response<Payload?> {
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/by/username/$username"
             val user = _client.get<Payload>(token, url)
             Response.Success(user)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 
     /**
@@ -79,18 +73,16 @@ class UserLookup {
      * @param token Authorization token
      * @param usernames List of usernames of the users to get
      *
-     * @return Returns a flow with the response and its payload
+     * @return Returns a list of user Payload's in a Response
      */
-    fun getUsersByUsernames(token:String, usernames:List<String>) = flow {
+    suspend fun getUsersByUsernames(token:String, usernames:List<String>): Response<List<Payload>?>{
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/by?${usernames.joinToString(",", "", "", 100)}"
             val users = _client.get<List<Payload>>(token, url)
             Response.Success(users)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 }

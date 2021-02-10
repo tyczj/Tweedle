@@ -1,10 +1,9 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("kotlin-android-extensions")
     id("kotlinx-serialization")
+    id("maven-publish")
 }
 
 repositories {
@@ -12,26 +11,29 @@ repositories {
     google()
     jcenter()
     mavenCentral()
-    maven {
-        url = uri("https://dl.bintray.com/kotlin/kotlin-eap")
-    }
 }
+
+group = "com.tycz"
+version = "0.2.0"
+
 kotlin {
-    android()
+    android{
+        publishLibraryVariants("release")
+    }
     ios {
         binaries {
             framework {
-                baseName = "sharedmodule"
+                baseName = "tweedle"
             }
         }
     }
     sourceSets {
-        val commonMain by getting{
+        val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:1.4.2")
-                implementation("io.ktor:ktor-client-json:1.4.2")
-                implementation("io.ktor:ktor-client-serialization:1.4.2")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
+                implementation("io.ktor:ktor-client-core:1.5.1")
+                implementation("io.ktor:ktor-client-json:1.5.1")
+                implementation("io.ktor:ktor-client-serialization:1.5.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
             }
         }
         val commonTest by getting {
@@ -43,8 +45,8 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("androidx.core:core-ktx:1.3.2")
-                implementation("io.ktor:ktor-client-android:1.4.2")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1")
+                implementation("io.ktor:ktor-client-android:1.5.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
             }
         }
         val androidTest by getting {
@@ -53,15 +55,20 @@ kotlin {
                 implementation("junit:junit:4.12")
             }
         }
-        val iosMain by getting{
-            dependencies{
-                implementation("io.ktor:ktor-client-ios:1.4.2")
-//                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.4.1")
+        val iosMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-ios:1.5.1")
+//                implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt"){
+//                    version {
+//                        strictly("1.4.2-native-mt")
+//                    }
+//                }
             }
         }
         val iosTest by getting
     }
 }
+
 android {
     compileSdkVersion(30)
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -77,7 +84,7 @@ android {
         }
     }
 
-    packagingOptions{
+    packagingOptions {
         excludes.add("META-INF/*.kotlin_module")
     }
     compileOptions {
@@ -90,13 +97,32 @@ android {
         }
     }
 }
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                url = uri("https://maven.pkg.jetbrains.space/tyczj/p/vqi18/tweedle")
+                credentials {
+                    username = "tyczj359"
+                    password = "eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiIxZnF3YkkwOGhFZ1UiLCJhdWQiOiJjaXJjbGV0LXdlYi11aSIsIm9yZ0RvbWFpbiI6InR5Y3pqIiwibmFtZSI6InR5Y3pqMzU5IiwiaXNzIjoiaHR0cHM6XC9cL2pldGJyYWlucy5zcGFjZSIsInBlcm1fdG9rZW4iOiIzVEtOOWg0NTltREwiLCJwcmluY2lwYWxfdHlwZSI6IlVTRVIiLCJpYXQiOjE2MTI4MzUzNjh9.olf8LQkB_U6ZfcFbLAIkvwbMmprBPkAT3uqsai1tRoqIiOEScbLkOO_rVBdzTw-IThjmK9zaLHW9V00aSsR1U7pGzILElHCdrTJn00hFJxjvQwjLlJ36Tbckdqwg-sE3PPZjvz25qHQ-T5chgtSUnLFZm0fVPVR5ZR7SZ14qW4U"
+//                    username = System.getenv("USERNAME")
+//                    password = System.getenv("PASSWORD")
+                }
+            }
+        }
+    }
+}
+
 val packForXcode by tasks.creating(Sync::class) {
     group = "build"
     val mode = System.getenv("CONFIGURATION") ?: "DEBUG"
     val sdkName = System.getenv("SDK_NAME") ?: "iphonesimulator"
     val targetName = "ios" + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
     val framework =
-        kotlin.targets.getByName<KotlinNativeTarget>(targetName).binaries.getFramework(mode)
+        kotlin.targets.getByName<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>(
+            targetName
+        ).binaries.getFramework(mode)
     inputs.property("mode", mode)
     dependsOn(framework.linkTask)
     val targetDir = File(buildDir, "xcode-frameworks")

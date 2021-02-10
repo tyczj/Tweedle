@@ -24,8 +24,8 @@ class TweetsStream {
      *
      * @return The response of the request for the rule add
      */
-    fun addRules(token: String, rule: Rule) = flow {
-        val result = try {
+    suspend fun addRules(token: String, rule: Rule):Response<RuleResponse?> {
+        return try {
             val url =
                 "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
             val response = _client.post<RuleResponse>(token, url, rule)
@@ -33,7 +33,6 @@ class TweetsStream {
         } catch (e: Exception) {
             Response.Error(e)
         }
-        emit(result)
     }
 
     /**
@@ -44,8 +43,8 @@ class TweetsStream {
      *
      * @return The response of the request to delete a rule or multiple rules
      */
-    fun deleteRule(token: String, deleteRule: DeleteRule) = flow {
-        val result = try {
+    suspend fun deleteRule(token: String, deleteRule: DeleteRule):Response<DeleteRuleResponse?>{
+        return try {
             val url =
                 "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
             val response = _client.post<DeleteRuleResponse>(token, url, deleteRule)
@@ -54,7 +53,6 @@ class TweetsStream {
             e.printStackTrace()
             Response.Error(e)
         }
-        emit(result)
     }
 
     /**
@@ -64,8 +62,8 @@ class TweetsStream {
      *
      * @return The current rules added
      */
-    fun getRules(token: String) = flow {
-        val result = try {
+    suspend fun getRules(token: String):Response<StreamRulesResponse?>{
+        return try {
             val url =
                 "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
             val response = _client.get<StreamRulesResponse>(token, url)
@@ -74,7 +72,6 @@ class TweetsStream {
             e.printStackTrace()
             Response.Error(e)
         }
-        emit(result)
     }
 
     /**

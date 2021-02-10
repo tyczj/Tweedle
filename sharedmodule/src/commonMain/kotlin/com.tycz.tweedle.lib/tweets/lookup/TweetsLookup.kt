@@ -16,19 +16,20 @@ class TweetsLookup {
      * @param token Authorization token
      * @param tweetId The if of the tweet to get
      *
-     * @return Returns a flow that returns the response with the tweet payload
+     * @return Returns a SingleTweetPayload in a Response
+     *
+     * @see com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
+     * @see com.tycz.tweedle.lib.api.Response
      */
-    fun getTweet(token:String, tweetId:Long) = flow{
+    suspend fun getTweet(token:String, tweetId:Long): Response<SingleTweetPayload?>{
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId"
             val payload = _client.get<SingleTweetPayload>(token, url)
             Response.Success(payload)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 
     /**
@@ -36,45 +37,42 @@ class TweetsLookup {
      * @param token Authorization token
      * @param tweetIds List of tweet id's to get the tweets for
      *
-     * @return Returns a flow that returns the response with the payload
+     * @return Returns a list of MultipleTweetPayload's in a Response
+     *
+     * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
+     * @see com.tycz.tweedle.lib.api.Response
      */
-    fun getMultipleTweets(token:String, tweetIds:List<Long>) = flow {
+    suspend fun getMultipleTweets(token:String, tweetIds:List<Long>): Response<List<MultipleTweetPayload>?> {
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}?ids=${tweetIds.joinToString(",","","",100)}"
             val tweets = _client.get<List<MultipleTweetPayload>>(token, url)
             Response.Success(tweets)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 
-    fun hideTweet(token:String, tweetId:Long) = flow {
+    suspend fun hideTweet(token:String, tweetId:Long):Response<HttpResponse?> {
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
             val response = _client.put<HttpResponse>(token, url, "{\\n    \\\"hidden\\\": true\\n}")
             Response.Success(response)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 
-    fun unhideTweet(token:String, tweetId:Long) = flow {
+    suspend fun unhideTweet(token:String, tweetId:Long):Response<HttpResponse?> {
 
-        val result = try{
+        return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
             val response = _client.put<HttpResponse>(token, url, "{\\n    \\\"hidden\\\": false\\n}")
             Response.Success(response)
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 
     /**
@@ -85,11 +83,14 @@ class TweetsLookup {
      * @param query Search query to submit to the recent search endpoint
      * @param additionalParameters Additional fields to be returned for extra information not in the query
      *
-     * @return Returns a flow with the response of the tweets payload
+     * @return Returns a MultipleTweetPayload in a Response
+     *
+     * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
+     * @see com.tycz.tweedle.lib.api.Response
      */
-    fun getRecentTweets(token:String, query:String, additionalParameters:Map<String,String>) = flow{
+    suspend fun getRecentTweets(token:String, query:String, additionalParameters:Map<String,String>):Response<MultipleTweetPayload?> {
 
-        val result = try{
+        return try{
             val builder = StringBuilder()
 
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/recent?query=$query"
@@ -103,7 +104,5 @@ class TweetsLookup {
         }catch (e:Exception){
             Response.Error(e)
         }
-
-        emit(result)
     }
 }

@@ -23,4 +23,4 @@ android:
     - extra-android-m2repository
 
 script:
-  - ./gradlew :lib:clean :lib:build :lib:bintrayUpload -x test
+  - ./gradlew :sharedmodule:clean :sharedmodule:build :sharedmodule:bintrayUpload -x test
