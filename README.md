@@ -4,20 +4,9 @@
 
 [![v2](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api)
 
-[![Build Status](https://travis-ci.org/tyczj/Tweedle.svg)](https://travis-ci.org/github/tyczj/Tweedle)
-[![Download](https://api.bintray.com/packages/tyczj359/Tweedle/lib/images/download.svg) ](https://bintray.com/tyczj359/Tweedle/lib/_latestVersion)
-
 Tweedle is an Android library built around the [Twitter v2 API](https://developer.twitter.com/en/docs/twitter-api/early-access) built fully in Kotlin using Kotlin Coroutines
 
-All API calls use kotlin flow to return data
-
-```
-_tweetLookup.getTweet(token, tweetId).collect {tweet ->
-    
-}
-```
-
-it allows for easy quick integration into the Android ViewModel that returns LiveData 
+Usage
 
 ### ViewModel
 
@@ -26,9 +15,14 @@ class MainViewModel: ViewModel() {
 
     private val _tweetLookup:TweetsLookup = TweetsLookup()
     
-    fun getTweet(token:String, tweetId:Long):LiveData<Response<SingleTweetPayload>>{
-        return _tweetLookup.getTweet(token, tweetId).asLiveData(viewModelScope.coroutineContext)
-    }
+    fun getTweet(token:String, tweetId:Long):LiveData<Response<SingleTweetPayload?>>{
+            val liveData:MutableLiveData<Response<SingleTweetPayload?>> = MutableLiveData<Response<SingleTweetPayload?>>()
+            viewModelScope.launch{
+                val response = _tweetLookup.getTweet(token, tweetId)
+                liveData.postValue(response)
+            }
+            return liveData
+        }
 }
 ```
 
@@ -71,12 +65,7 @@ val addRule = Add(filter.filter, "Sunday Morning")
 filters.add(addRule)
 val rule = Rule(filters)
 
-_tweetStream.addRules(token, rule).collect {
-    when(it){
-        is Response.Error -> {it.exception}
-        is Response.Success -> it.data
-    }
-}
+_tweetStream.addRules(token, rule)
 ````
 
 Currently Twitter only supports 25 filters/rules per API key
@@ -95,6 +84,12 @@ Collect is called every time a new tweet is received
 
 To start using Tweedle, include the dependency in your `build.gradle`
 
+Common
 ```
-implementation 'com.tycz:tweedle:0.1.1'
+implementation("com.tycz:tweedle:0.2.2")
+```
+
+Android
+```
+implementation("com.tycz:tweedle-android:0.2.2")
 ```
