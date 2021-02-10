@@ -14,7 +14,7 @@ repositories {
 }
 
 group = "com.tycz"
-version = "0.2.0"
+version = "0.2.1"
 
 kotlin {
     android{
@@ -104,10 +104,8 @@ afterEvaluate {
             maven {
                 url = uri("https://maven.pkg.jetbrains.space/tyczj/p/vqi18/tweedle")
                 credentials {
-                    username = "tyczj359"
-                    password = "eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiIxZnF3YkkwOGhFZ1UiLCJhdWQiOiJjaXJjbGV0LXdlYi11aSIsIm9yZ0RvbWFpbiI6InR5Y3pqIiwibmFtZSI6InR5Y3pqMzU5IiwiaXNzIjoiaHR0cHM6XC9cL2pldGJyYWlucy5zcGFjZSIsInBlcm1fdG9rZW4iOiIzVEtOOWg0NTltREwiLCJwcmluY2lwYWxfdHlwZSI6IlVTRVIiLCJpYXQiOjE2MTI4MzUzNjh9.olf8LQkB_U6ZfcFbLAIkvwbMmprBPkAT3uqsai1tRoqIiOEScbLkOO_rVBdzTw-IThjmK9zaLHW9V00aSsR1U7pGzILElHCdrTJn00hFJxjvQwjLlJ36Tbckdqwg-sE3PPZjvz25qHQ-T5chgtSUnLFZm0fVPVR5ZR7SZ14qW4U"
-//                    username = System.getenv("USERNAME")
-//                    password = System.getenv("PASSWORD")
+                    username = System.getenv("USERNAME")
+                    password = System.getenv("PASSWORD")
                 }
             }
         }

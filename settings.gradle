@@ -1,4 +1,4 @@
-include ':sharedmodule'
+include ':tweedle'
 include ':app'
 rootProject.name = "tweedle"
 enableFeaturePreview('GRADLE_METADATA')
