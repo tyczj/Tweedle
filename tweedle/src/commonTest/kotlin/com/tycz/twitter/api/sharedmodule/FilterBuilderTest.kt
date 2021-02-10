@@ -1,8 +1,8 @@
-package com.tycz.tweedle.lib
+package com.tycz.twitter.api.sharedmodule
 
 import com.tycz.tweedle.lib.tweets.stream.filter.Filter
-import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class FilterBuilderTest {
 
@@ -18,7 +18,7 @@ class FilterBuilderTest {
             .addOperator("#NoSchool")
             .build()
 
-        Assert.assertEquals(expectedText, filter.filter)
+        assertEquals(expectedText, filter.filter)
     }
 
     @Test
@@ -33,7 +33,7 @@ class FilterBuilderTest {
             .addOperator("#NoSchool")
             .build()
 
-        Assert.assertEquals(expected, filter.filter)
+        assertEquals(expected, filter.filter)
     }
 
     @Test
@@ -49,7 +49,7 @@ class FilterBuilderTest {
             .addOperator("day")
             .build()
 
-        Assert.assertEquals(expected, filter.filter)
+        assertEquals(expected, filter.filter)
     }
 
     @Test
@@ -62,6 +62,6 @@ class FilterBuilderTest {
             .setLanguage(Filter.ENGLISH)
             .build()
 
-        Assert.assertEquals(expected, filter.filter)
+        assertEquals(expected, filter.filter)
     }
 }

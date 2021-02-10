@@ -1,6 +1,7 @@
 package com.tycz.android.twitter.api.v2
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -71,29 +72,43 @@ class MainActivity : AppCompatActivity() {
         //endregion
 
         //region Streaming
-//        model.getStreamTweets(
-//            token
-//        ).observe(this, Observer {
+//        model.getStreamTweets(token).observe(this, Observer {
 //            when(it){
 //                is Response.Success -> Log.d("TWEET", it.data.data.text)
+//                is Response.Error -> {
+//                    Log.d("Error", it.exception.message!!)
+//                }
 //            }
 //        })
+//
+//        //Close the stream in 40 seconds
+//        Handler().postDelayed({
+//            model.closeStream()
+//        }, 40000)
         //endregion
 
         //region Recent Tweets
-//                val map = HashMap<String, String>()
-//        map["tweet.fields"] = "lang"
-//        map["expansions"] = "attachments.media_keys"
-//        map["media.fields"] = "preview_image_url,url"
-//
-//        model.getRecentTweets(token,
-//            "from:TwitterDev",
-//            map).observe(this, Observer {
-//            when(it){
-//                is Response.Error -> {it.exception}
-//                is Response.Success -> it.data
-//            }
-//        })
+        val map = HashMap<String, String>()
+        map["tweet.fields"] = "lang"
+        map["expansions"] = "attachments.media_keys"
+        map["media.fields"] = "preview_image_url,url"
+
+        val filter: Filter = Filter.Builder()
+            .addOperator("from:TwitterDev")
+            .build()
+
+        model.getRecentTweets(
+            token,
+            filter.filter,
+            map
+        ).observe(this, Observer {
+            when (it) {
+                is Response.Error -> {
+                    it.exception
+                }
+                is Response.Success -> it.data!!.data[0]
+            }
+        })
         //endregion
 
     }
