@@ -65,7 +65,10 @@ class Authentication {
     private fun parseTokenResponse(response:String):TokenResponse{
         val splitResponse = response.split("&")
         return if(splitResponse.size > 2){
-            TokenResponse(splitResponse[0], splitResponse[1], splitResponse[2]=="true", null)
+            val oauthToken = splitResponse[0].split("=")[1]
+            val oauthTokenSecret = splitResponse[1].split("=")[1]
+            val oauthCallbackConfirmed = splitResponse[2].split("=")[1]
+            TokenResponse(oauthToken, oauthTokenSecret, oauthCallbackConfirmed=="true", null)
         }else{
             TokenResponse(null, null, null, "Unable to parse request token response: $response")
         }
