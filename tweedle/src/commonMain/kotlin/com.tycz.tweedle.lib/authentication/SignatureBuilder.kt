@@ -1,6 +1,5 @@
 package com.tycz.tweedle.lib.authentication
 
-import com.tycz.tweedle.lib.epochSeconds
 import com.tycz.tweedle.lib.generateHmacSha1Signature
 import com.tycz.tweedle.lib.urlEncodeString
 import io.ktor.http.*

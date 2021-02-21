@@ -33,7 +33,11 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:1.5.1")
                 implementation("io.ktor:ktor-client-json:1.5.1")
                 implementation("io.ktor:ktor-client-serialization:1.5.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt"){
+                    version {
+                        strictly("1.4.2-native-mt")
+                    }
+                }
             }
         }
         val commonTest by getting {
@@ -46,7 +50,7 @@ kotlin {
             dependencies {
                 implementation("androidx.core:core-ktx:1.3.2")
                 implementation("io.ktor:ktor-client-android:1.5.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2-native-mt")
             }
         }
         val androidTest by getting {

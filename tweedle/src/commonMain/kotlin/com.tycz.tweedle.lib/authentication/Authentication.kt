@@ -47,15 +47,21 @@ class Authentication {
 
         val builder = HttpRequestBuilder()
         builder.header(HttpHeaders.Authorization, headerBuilder.toString())
-        val response:Response<String>? = _client.post(builder)
+
+        val response = try{
+            val response = _client.post<String>(builder)
+            Response.Success(response)
+        }catch (e:Exception){
+            Response.Error(e)
+        }
 
         if(response is Response.Success){
-            parseTokenResponse(response.data)
+            parseTokenResponse(response.data!!)
         }else{
             TokenResponse(null, null, null, (response as Response.Error).exception.message)
         }
     }
-
+    
     private fun parseTokenResponse(response:String):TokenResponse{
         val splitResponse = response.split("&")
         return if(splitResponse.size > 2){
