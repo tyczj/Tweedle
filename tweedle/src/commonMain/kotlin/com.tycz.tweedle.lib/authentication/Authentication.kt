@@ -13,7 +13,7 @@ import com.tycz.tweedle.lib.api.Response
 class Authentication {
     private val _client = AuthClient.instance
 
-    suspend fun authenticateWithCallback(callbackUrl: String, apiKey: String, apiSecret: String):Response<String>? = withContext(Dispatchers.Default){
+    suspend fun authenticateWithCallback(callbackUrl: String, apiKey: String, apiSecret: String):TokenResponse = withContext(Dispatchers.Default){
 
         val headerBuilder = StringBuilder()
 
@@ -39,7 +39,6 @@ class Authentication {
         headerBuilder.append("$OAuth ")
         headerBuilder.append("$consumerKey,")
         headerBuilder.append("$callback,")
-//        headerBuilder.append("oauth_consumer_secret=\"${apiSecret}\",")
         headerBuilder.append("$signature,")
         headerBuilder.append("$method,")
         headerBuilder.append("$version,")
@@ -48,7 +47,21 @@ class Authentication {
 
         val builder = HttpRequestBuilder()
         builder.header(HttpHeaders.Authorization, headerBuilder.toString())
-        _client.post(builder)
+        val response:Response<String>? = _client.post(builder)
 
+        if(response is Response.Success){
+            parseTokenResponse(response.data)
+        }else{
+            TokenResponse(null, null, null, (response as Response.Error).exception.message)
+        }
+    }
+
+    private fun parseTokenResponse(response:String):TokenResponse{
+        val splitResponse = response.split("&")
+        return if(splitResponse.size > 2){
+            TokenResponse(splitResponse[0], splitResponse[1], splitResponse[2]=="true", null)
+        }else{
+            TokenResponse(null, null, null, "Unable to parse request token response: $response")
+        }
     }
 }
