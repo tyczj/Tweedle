@@ -1,9 +1,14 @@
 package com.tycz.tweedle.lib.authentication
 
-data class SignatureParams(
-    val callbackUrl: String,
+internal data class SignatureParams(
+    val httpMethod: String,
+    val callbackUrl: String?,
     val apiKey: String,
     val apiSecret: String,
     val nonce: String,
-    val epochSeconds: Long
+    val epochSeconds: Long,
+    val url: String,
+    val oAuthToken: String?,
+    var urlParams: MutableMap<String, String>?,
+    var authParams: MutableMap<String, String>
     )

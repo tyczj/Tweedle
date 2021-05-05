@@ -1,52 +1,36 @@
 package com.tycz.tweedle.lib.authentication
 
-import com.tycz.tweedle.lib.api.AuthClient
-import com.tycz.tweedle.lib.epochSeconds
+import com.tycz.tweedle.lib.ExperimentalApi
+import com.tycz.tweedle.lib.api.Response
+import com.tycz.tweedle.lib.api.TwitterClient
+import com.tycz.tweedle.lib.authentication.oauth.OAuth1
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.http.auth.*
-import io.ktor.http.auth.AuthScheme.OAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.tycz.tweedle.lib.api.Response
 
-class Authentication {
-    private val _client = AuthClient.instance
+/**
+ * Class for authenticating with twitter
+ */
+class Authentication @ExperimentalApi constructor(private val oAuth: OAuth1) {
+    private val _client = TwitterClient.instance
 
-    suspend fun authenticateWithCallback(callbackUrl: String, apiKey: String, apiSecret: String):TokenResponse = withContext(Dispatchers.Default){
+    /**
+     * Allows a Consumer application to obtain an OAuth Request Token to request user authorization
+     * First step in the OAuth 1.0 authentication flow
+     *
+     * @param callbackUrl The value you specify here will be used as the URL a user is redirected to should they approve your application's access to their account.
+     * callback URL used with this endpoint will have to be configured within the App’s settings on developer.twitter.com
+     */
+    @ExperimentalApi
+    suspend fun requestToken(callbackUrl: String):TokenResponse = withContext(Dispatchers.Default){
 
-        val headerBuilder = StringBuilder()
+        oAuth.callbackUrl = callbackUrl
+        oAuth.httpMethod = SignatureBuilder.HTTP_POST
+        oAuth.url = SignatureBuilder.AUTH_REQUEST_TOKEN_URL
 
-        val epoch = epochSeconds()
-
-        val allowedChars = ('A'..'Z') + ('a'..'z') + (0..9)
-        val s = (1..32).map { allowedChars.random() }
-            .joinToString("")
-
-        val nonce = "${HttpAuthHeader.Parameters.OAuthNonce}=\"$s\","
-
-        val consumerKey = "${HttpAuthHeader.Parameters.OAuthConsumerKey}=\"${apiKey}\""
-        val callback = "${HttpAuthHeader.Parameters.OAuthCallback}=\"${callbackUrl}\""
-        val method = "${HttpAuthHeader.Parameters.OAuthSignatureMethod}=\"HMAC-SHA1\""
-        val version = "${HttpAuthHeader.Parameters.OAuthVersion}=\"1.0\""
-        val timestamp = "${HttpAuthHeader.Parameters.OAuthTimestamp}=\"${epoch}\""
-
-        val sigBuilder = SignatureBuilder()
-        val authSig = sigBuilder.createSignature(SignatureParams(callback, apiKey, apiSecret, s, epoch))
-
-        val signature = "${HttpAuthHeader.Parameters.OAuthSignature}=\"$authSig\""
-
-        headerBuilder.append("$OAuth ")
-        headerBuilder.append("$consumerKey,")
-        headerBuilder.append("$callback,")
-        headerBuilder.append("$signature,")
-        headerBuilder.append("$method,")
-        headerBuilder.append("$version,")
-        headerBuilder.append("$nonce,")
-        headerBuilder.append("$timestamp,")
-
-        val builder = HttpRequestBuilder()
-        builder.header(HttpHeaders.Authorization, headerBuilder.toString())
+        val builder = oAuth.buildRequest()
+        builder.url(URLBuilder("${TwitterClient.AUTH_BASE_URL}${TwitterClient.REQUEST_TOKEN_ENDPOINT}").build())
 
         val response = try{
             val response = _client.post<String>(builder)
@@ -61,7 +45,36 @@ class Authentication {
             TokenResponse(null, null, null, (response as Response.Error).exception.message)
         }
     }
-    
+
+    /**
+     * Allows a Consumer application to exchange the OAuth Request Token for an OAuth Access Token
+     * Final step in obtaining an OAuth access token
+     *
+     * @param oauthToken Token from step two of the authentication flow, the twitter authorize request
+     *
+     * @param oauthVerifier Token from step two of the authentication flow, the twitter authorize request
+     */
+    suspend fun getAccessToken(oauthToken: String, oauthVerifier: String):AccessTokenResponse = withContext(Dispatchers.Default){
+        val builder = HttpRequestBuilder()
+        builder.url(URLBuilder("${TwitterClient.AUTH_BASE_URL}${TwitterClient.ACCESS_TOKEN_ENDPOINT}?oauth_token=$oauthToken&oauth_verifier=$oauthVerifier").build())
+
+        val response = try{
+            val response = _client.post<String>(builder)
+            Response.Success(response)
+        }catch (e:Exception){
+            Response.Error(e)
+        }
+
+        if(response is Response.Success){
+            parseAccessTokenResponse(response.data!!)
+        }else{
+            AccessTokenResponse(null, null, null, (response as Response.Error).exception.message)
+        }
+    }
+
+    /**
+     * Parses the response from requestToken request
+     */
     private fun parseTokenResponse(response:String):TokenResponse{
         val splitResponse = response.split("&")
         return if(splitResponse.size > 2){
@@ -71,6 +84,21 @@ class Authentication {
             TokenResponse(oauthToken, oauthTokenSecret, oauthCallbackConfirmed=="true", null)
         }else{
             TokenResponse(null, null, null, "Unable to parse request token response: $response")
+        }
+    }
+
+    /**
+     * Parses the response from the access token request
+     */
+    private fun parseAccessTokenResponse(response:String): AccessTokenResponse{
+        val splitResponse = response.split("&")
+        return if(splitResponse.size > 2){
+            val oauthToken = splitResponse[0].split("=")[1]
+            val oauthTokenSecret = splitResponse[1].split("=")[1]
+            val screenName = splitResponse[2].split("=")[1]
+            AccessTokenResponse(oauthToken, oauthTokenSecret, screenName, null)
+        }else{
+            AccessTokenResponse(null, null, null, "Unable to parse request token response: $response")
         }
     }
 }

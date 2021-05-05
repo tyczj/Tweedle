@@ -1,7 +1,13 @@
 package com.tycz.android.twitter.api.v2
 
 import androidx.lifecycle.*
+import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
+import com.tycz.tweedle.lib.authentication.AccessTokenResponse
+import com.tycz.tweedle.lib.authentication.Authentication
+import com.tycz.tweedle.lib.authentication.TokenResponse
+import com.tycz.tweedle.lib.authentication.oauth.OAuth1
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2
 import com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
 import com.tycz.tweedle.lib.dtos.tweet.rules.Rule
 import com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
@@ -14,92 +20,116 @@ import com.tycz.tweedle.lib.lookup.UserLookup
 import com.tycz.tweedle.lib.tweets.stream.TweetsStream
 import kotlinx.coroutines.launch
 
+@ExperimentalApi
 class MainViewModel: ViewModel() {
 
-    private val _tweetLookup:TweetsLookup = TweetsLookup()
-    private val _userLookup:UserLookup = UserLookup()
-    private val _tweetStream:TweetsStream = TweetsStream()
+    private lateinit var _tweetLookup:TweetsLookup
+    private lateinit var _userLookup:UserLookup
+    private lateinit var _tweetStream:TweetsStream
+    private lateinit var _authentication:Authentication
 
-    fun getTweet(token:String, tweetId:Long):LiveData<Response<SingleTweetPayload?>>{
+    var authOAuth: OAuth1? = null
+            set(value) {
+                value?.let {
+                    _authentication = Authentication(value)
+                }
+            }
+
+    var oAuth1: OAuth1? = null
+        set(value) {
+            value?.let {
+                _tweetLookup = TweetsLookup(value)
+                _userLookup = UserLookup(value)
+            }
+        }
+    var oAuth2: OAuth2? = null
+        set(value) {
+            value?.let {
+//                _tweetLookup = TweetsLookup(value)
+                _tweetStream = TweetsStream(value)
+            }
+        }
+
+    fun getTweet(tweetId:Long):LiveData<Response<SingleTweetPayload?>>{
         val liveData:MutableLiveData<Response<SingleTweetPayload?>> = MutableLiveData<Response<SingleTweetPayload?>>()
         viewModelScope.launch{
-            val response = _tweetLookup.getTweet(token, tweetId)
+            val response = _tweetLookup.getTweet(tweetId)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun getMultipleTweets(token:String, tweetIds:List<Long>):LiveData<Response<List<MultipleTweetPayload>?>>{
-        val liveData:MutableLiveData<Response<List<MultipleTweetPayload>?>> = MutableLiveData<Response<List<MultipleTweetPayload>?>>()
+    fun getMultipleTweets(tweetIds:List<Long>):LiveData<Response<MultipleTweetPayload?>>{
+        val liveData:MutableLiveData<Response<MultipleTweetPayload?>> = MutableLiveData<Response<MultipleTweetPayload?>>()
         viewModelScope.launch{
-            val response = _tweetLookup.getMultipleTweets(token, tweetIds)
+            val response = _tweetLookup.getMultipleTweets(tweetIds)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun getUser(token:String, userId:Long):LiveData<Response<Payload?>>{
+    fun getUser(userId:Long):LiveData<Response<Payload?>>{
         val liveData:MutableLiveData<Response<Payload?>> = MutableLiveData<Response<Payload?>>()
         viewModelScope.launch {
-            val response = _userLookup.getUserById(token, userId)
+            val response = _userLookup.getUserById(userId)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun getUsers(token:String, userIds:List<Long>):LiveData<Response<List<Payload>?>>{
+    fun getUsers(userIds:List<Long>):LiveData<Response<List<Payload>?>>{
         val liveData:MutableLiveData<Response<List<Payload>?>> = MutableLiveData<Response<List<Payload>?>>()
         viewModelScope.launch {
-            val response = _userLookup.getUsersByIds(token, userIds)
+            val response = _userLookup.getUsersByIds(userIds)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun getUserByUsername(token:String, username:String):LiveData<Response<Payload?>>{
+    fun getUserByUsername(username:String):LiveData<Response<Payload?>>{
         val liveData:MutableLiveData<Response<Payload?>> = MutableLiveData<Response<Payload?>>()
         viewModelScope.launch {
-            val response = _userLookup.getUserByUsername(token, username)
+            val response = _userLookup.getUserByUsername(username)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun getUsersByUsernames(token:String, usernames:List<String>):LiveData<Response<List<Payload>?>>{
+    fun getUsersByUsernames(usernames:List<String>):LiveData<Response<List<Payload>?>>{
         val liveData:MutableLiveData<Response<List<Payload>?>> = MutableLiveData<Response<List<Payload>?>>()
         viewModelScope.launch {
-            val response = _userLookup.getUsersByUsernames(token, usernames)
+            val response = _userLookup.getUsersByUsernames(usernames)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun deleteRule(token: String, deleteRule:DeleteRule):LiveData<Response<DeleteRuleResponse?>>{
+    fun deleteRule(deleteRule:DeleteRule):LiveData<Response<DeleteRuleResponse?>>{
         val liveData:MutableLiveData<Response<DeleteRuleResponse?>> = MutableLiveData<Response<DeleteRuleResponse?>>()
         viewModelScope.launch {
-            val response = _tweetStream.deleteRule(token, deleteRule)
+            val response = _tweetStream.deleteRule(deleteRule)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun addRule(token: String, rule: Rule):LiveData<Response<RuleResponse?>>{
+    fun addRule(rule: Rule):LiveData<Response<RuleResponse?>>{
         val liveData:MutableLiveData<Response<RuleResponse?>> = MutableLiveData<Response<RuleResponse?>>()
         viewModelScope.launch {
-            val response = _tweetStream.addRules(token, rule)
+            val response = _tweetStream.addRules(rule)
             liveData.postValue(response)
         }
         return liveData
     }
 
-    fun getStreamTweets(token:String):LiveData<Response<SingleTweetPayload>>{
-        return _tweetStream.startTweetStream(token).asLiveData(viewModelScope.coroutineContext)
+    fun getStreamTweets():LiveData<Response<SingleTweetPayload>>{
+        return _tweetStream.startTweetStream().asLiveData(viewModelScope.coroutineContext)
     }
 
-    fun getRecentTweets(token:String, query:String, additionalParameters:Map<String,String>):LiveData<Response<MultipleTweetPayload?>>{
+    fun getRecentTweets(query: String, additionalParameters:Map<String,String>):LiveData<Response<MultipleTweetPayload?>>{
         val liveData:MutableLiveData<Response<MultipleTweetPayload?>> = MutableLiveData<Response<MultipleTweetPayload?>>()
         viewModelScope.launch {
-            val response = _tweetLookup.getRecentTweets(token, query, additionalParameters)
+            val response = _tweetLookup.getRecentTweets(query, additionalParameters)
             liveData.postValue(response)
         }
         return liveData
@@ -107,5 +137,23 @@ class MainViewModel: ViewModel() {
 
     fun closeStream(){
         _tweetStream.closeStream()
+    }
+
+    fun authenticate(callbackUrl: String):LiveData<TokenResponse>{
+        val liveData:MutableLiveData<TokenResponse> = MutableLiveData<TokenResponse>()
+        viewModelScope.launch {
+            val token = _authentication.requestToken(callbackUrl)
+            liveData.postValue(token)
+        }
+        return liveData
+    }
+
+    fun getAccessToken(oauthToken: String, oauthVerifier: String):LiveData<AccessTokenResponse>{
+        val liveData:MutableLiveData<AccessTokenResponse> = MutableLiveData<AccessTokenResponse>()
+        viewModelScope.launch {
+            val accessToken = _authentication.getAccessToken(oauthToken, oauthVerifier)
+            liveData.postValue(accessToken)
+        }
+        return liveData
     }
 }

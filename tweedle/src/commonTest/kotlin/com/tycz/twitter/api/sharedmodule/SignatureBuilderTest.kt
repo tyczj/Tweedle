@@ -10,13 +10,6 @@ class SignatureBuilderTest {
 
     @Test
     fun testSignature(){
-        val sBuilder = SignatureBuilder()
 
-        val allowedChars = ('A'..'Z') + ('a'..'z') + (0..9)
-        val s = (1..32).map { allowedChars.random() }
-            .joinToString("")
-
-        val sig = sBuilder.createSignature(SignatureParams("", "", "", s, epochSeconds()))
-        assertNotNull(sig)
     }
 }

@@ -33,6 +33,9 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:1.5.1")
                 implementation("io.ktor:ktor-client-json:1.5.1")
                 implementation("io.ktor:ktor-client-serialization:1.5.1")
+                implementation("io.ktor:ktor-client-logging:1.5.1")
+                implementation("ch.qos.logback:logback-classic:1.2.3")
+//                implementation("com.squareup.okio:okio:2.10.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt"){
                     version {
                         strictly("1.4.2-native-mt")
@@ -51,6 +54,7 @@ kotlin {
                 implementation("androidx.core:core-ktx:1.3.2")
                 implementation("io.ktor:ktor-client-android:1.5.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2-native-mt")
+                implementation("com.github.scribejava:scribejava-apis:8.3.0")
             }
         }
         val androidTest by getting {
@@ -62,11 +66,6 @@ kotlin {
         val iosMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-ios:1.5.1")
-//                implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt"){
-//                    version {
-//                        strictly("1.4.2-native-mt")
-//                    }
-//                }
             }
         }
         val iosTest by getting
@@ -77,7 +76,7 @@ android {
     compileSdkVersion(30)
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(24)
+        minSdkVersion(26)
         targetSdkVersion(30)
         versionCode = 1
         versionName = "1.0"
@@ -109,7 +108,7 @@ afterEvaluate {
                 url = uri("https://maven.pkg.jetbrains.space/tyczj/p/vqi18/tweedle")
                 credentials {
                     username = "tyczj359"
-                    password = "eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiIxZnF3YkkwOGhFZ1UiLCJhdWQiOiJjaXJjbGV0LXdlYi11aSIsIm9yZ0RvbWFpbiI6InR5Y3pqIiwibmFtZSI6InR5Y3pqMzU5IiwiaXNzIjoiaHR0cHM6XC9cL2pldGJyYWlucy5zcGFjZSIsInBlcm1fdG9rZW4iOiIzVEtOOWg0NTltREwiLCJwcmluY2lwYWxfdHlwZSI6IlVTRVIiLCJpYXQiOjE2MTI4MzUzNjh9.olf8LQkB_U6ZfcFbLAIkvwbMmprBPkAT3uqsai1tRoqIiOEScbLkOO_rVBdzTw-IThjmK9zaLHW9V00aSsR1U7pGzILElHCdrTJn00hFJxjvQwjLlJ36Tbckdqwg-sE3PPZjvz25qHQ-T5chgtSUnLFZm0fVPVR5ZR7SZ14qW4U"
+                    password = ""
                 }
             }
         }
