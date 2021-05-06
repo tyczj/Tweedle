@@ -12,6 +12,7 @@ import java.net.URLDecoder
 
 class TwitterAuthActivity: AppCompatActivity() {
     lateinit var oauthToken: String
+    private val callbackUrl = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.twitter_auth_activity_layout)
@@ -27,7 +28,7 @@ class TwitterAuthActivity: AppCompatActivity() {
     private val webViewClient = object : WebViewClient() {
 
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-            if (request!!.url.toString().startsWith("https://inlighten.net")) {
+            if (request!!.url.toString().startsWith(callbackUrl)) {
                 val decodedUrl = URLDecoder.decode(request.url.toString(), "UTF-8")
                 if (decodedUrl.contains("oauth_token=")) {
                     val uri = Uri.parse(decodedUrl)
