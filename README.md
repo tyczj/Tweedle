@@ -162,10 +162,10 @@ To start using Tweedle, include the dependency in your `build.gradle`
 
 Common
 ```kotlin
-implementation("com.tycz:tweedle:0.2.2")
+implementation("com.tycz:tweedle:0.3.0")
 ```
 
 Android
 ```kotlin
-implementation("com.tycz:tweedle-android:0.2.2")
+implementation("com.tycz:tweedle-android:0.3.0")
 ```
