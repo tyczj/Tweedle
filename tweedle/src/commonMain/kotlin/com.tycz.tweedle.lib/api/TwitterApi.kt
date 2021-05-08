@@ -6,6 +6,7 @@ import io.ktor.client.call.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.request.get
 import io.ktor.client.statement.*
@@ -19,6 +20,10 @@ internal class TwitterClient private constructor() {
         const val TWEETS_ENDPOINT = "tweets"
         const val USERS_ENDPOINT = "users"
 
+        const val AUTH_BASE_URL = "https://api.twitter.com/oauth/"
+        const val REQUEST_TOKEN_ENDPOINT = "request_token"
+        const val ACCESS_TOKEN_ENDPOINT = "access_token"
+
         val instance: TwitterClient by lazy { TwitterClient() }
     }
 
@@ -30,12 +35,14 @@ internal class TwitterClient private constructor() {
             }
             serializer = KotlinxSerializer(json)
         }
+        install(Logging){
+//            this.level = LogLevel.ALL
+            logger = Logger.DEFAULT
+        }
     }
 
-    suspend inline fun <reified T> get(authKey: String, url: String): T? {
-        val response = _client.get<HttpResponse>(url) {
-            header("Authorization", "Bearer $authKey")
-        }
+    suspend inline fun <reified T> get(builder: HttpRequestBuilder): T? {
+        val response = _client.get<HttpResponse>(builder)
 
         when (response.status.value) {
             in 300..399 -> throw RedirectResponseException(response)
@@ -50,20 +57,14 @@ internal class TwitterClient private constructor() {
         return response.receive<T>()
     }
 
-    suspend fun getStream(authKey: String, urlString: String): HttpStatement {
+    suspend fun getStream(builder: HttpRequestBuilder): HttpStatement {
 
-        return _client.get<HttpStatement>(urlString) {
-            header("Authorization", "Bearer $authKey")
-        }
+        return _client.get<HttpStatement>(builder)
 
     }
 
-    suspend inline fun <reified T> post(authKey: String, url: String, data: Any): T? {
-        val response = _client.post<HttpResponse>(url) {
-            header("Authorization", "Bearer $authKey")
-            contentType(ContentType.Application.Json)
-            body = data
-        }
+    suspend inline fun <reified T> post(builder: HttpRequestBuilder): T? {
+        val response = _client.post<HttpResponse>(builder)
 
         when (response.status.value) {
             in 300..399 -> throw RedirectResponseException(response)
@@ -78,12 +79,8 @@ internal class TwitterClient private constructor() {
         return response.receive<T>()
     }
 
-    suspend inline fun <reified T> put(authKey: String, url: String, data: Any): T? {
-        val response = _client.put<HttpResponse>(url) {
-            header("Authorization", "Bearer $authKey")
-            contentType(ContentType.Application.Json)
-            body = data
-        }
+    suspend inline fun <reified T> put(builder: HttpRequestBuilder): T? {
+        val response = _client.put<HttpResponse>(builder)
 
         when (response.status.value) {
             in 300..399 -> throw RedirectResponseException(response)

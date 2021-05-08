@@ -2,16 +2,19 @@ package com.tycz.tweedle.lib.tweets.stream
 
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.api.TwitterClient
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2
 import com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
 import com.tycz.tweedle.lib.dtos.tweet.rules.*
 import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-class TweetsStream {
+class TweetsStream(private val oAuth: OAuth2){
 
     private val _client = TwitterClient.instance
     private var _streamChannel: ByteReadChannel? = null
@@ -20,15 +23,18 @@ class TweetsStream {
      * Adds a rule or multiple rules to filter streaming tweets by.
      * Rules need to be added before you start streaming tweets
      *
-     * @param token Authorization token
-     *
      * @return The response of the request for the rule add
      */
-    suspend fun addRules(token: String, rule: Rule):Response<RuleResponse?> {
+    suspend fun addRules(rule: Rule):Response<RuleResponse?> {
         return try {
-            val url =
-                "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
-            val response = _client.post<RuleResponse>(token, url, rule)
+            val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
+
+            val builder = oAuth.buildRequest()
+            builder.url(URLBuilder(url).build())
+            builder.contentType(ContentType.Application.Json)
+            builder.body = rule
+
+            val response = _client.post<RuleResponse>(builder)
             Response.Success(response)
         } catch (e: Exception) {
             Response.Error(e)
@@ -38,16 +44,20 @@ class TweetsStream {
     /**
      * Deletes a previously added rule
      *
-     * @param token Authorization token
      * @param deleteRule Rules to be deleted
      *
      * @return The response of the request to delete a rule or multiple rules
      */
-    suspend fun deleteRule(token: String, deleteRule: DeleteRule):Response<DeleteRuleResponse?>{
+    suspend fun deleteRule(deleteRule: DeleteRule):Response<DeleteRuleResponse?>{
         return try {
-            val url =
-                "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
-            val response = _client.post<DeleteRuleResponse>(token, url, deleteRule)
+            val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
+
+            val builder = oAuth.buildRequest()
+            builder.url(URLBuilder(url).build())
+            builder.contentType(ContentType.Application.Json)
+            builder.body = deleteRule
+
+            val response = _client.post<DeleteRuleResponse>(builder)
             Response.Success(response)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -58,15 +68,16 @@ class TweetsStream {
     /**
      * Gets all the current rules for a stream
      *
-     * @param token Authorization token
-     *
      * @return The current rules added
      */
-    suspend fun getRules(token: String):Response<StreamRulesResponse?>{
+    suspend fun getRules():Response<StreamRulesResponse?>{
         return try {
-            val url =
-                "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
-            val response = _client.get<StreamRulesResponse>(token, url)
+            val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/search/stream/rules"
+
+            val builder = oAuth.buildRequest()
+            builder.url(URLBuilder(url).build())
+
+            val response = _client.get<StreamRulesResponse>(builder)
             Response.Success(response)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -82,17 +93,17 @@ class TweetsStream {
      *
      * Please note it may take some time for tweets to start coming through initially
      *
-     * @param token Authorization token
-     *
      * @return Returns a flow that emits a tweet when one is received
      */
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun startTweetStream(token: String) = flow {
+    fun startTweetStream() = flow {
         try {
             closeStream()
 
             val url = "https://api.twitter.com/2/tweets/search/stream"
-            val statement = _client.getStream(token, url)
+            val builder = oAuth.buildRequest()
+            builder.url(URLBuilder(url).build())
+            val statement = _client.getStream(builder)
             statement.execute {
                 _streamChannel = it.receive<ByteReadChannel>()
                 var concatString: String = ""
@@ -134,17 +145,17 @@ class TweetsStream {
      *
      * Make sure to call closeStream() when done streaming
      *
-     * @param token Authorization token
-     *
      * @return Returns a flow that emits a tweet when one is received
      */
     @Suppress("BlockingMethodInNonBlockingContext")
-    fun startSampledTweetStream(token: String) = flow {
+    fun startSampledTweetStream() = flow {
         try {
             closeStream()
 
             val url = "https://api.twitter.com/2/tweets/sampled/stream"
-            val statement = _client.getStream(token, url)
+            val builder = oAuth.buildRequest()
+            builder.url(URLBuilder(url).build())
+            val statement = _client.getStream(builder)
             statement.execute {
                 _streamChannel = it.receive<ByteReadChannel>()
                 var concatString: String = ""

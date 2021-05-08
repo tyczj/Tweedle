@@ -11,7 +11,7 @@ data class MultipleTweetPayload(
     /**
      * A list of tweets returned
      */
-    val `data`: List<TweetData>,
+    val `data`: List<TweetData>? = null,
     val includes: Includes? = null,
     val meta: Meta? = null
 )

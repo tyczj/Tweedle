@@ -1,12 +1,18 @@
 package com.tycz.android.twitter.api.v2
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
+import com.tycz.tweedle.lib.authentication.oauth.AuthenticationOAuth
+import com.tycz.tweedle.lib.authentication.oauth.OAuth1
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2
 import com.tycz.tweedle.lib.dtos.tweet.Add
 import com.tycz.tweedle.lib.dtos.tweet.rules.Delete
 import com.tycz.tweedle.lib.dtos.tweet.rules.DeleteRule
@@ -14,17 +20,84 @@ import com.tycz.tweedle.lib.dtos.tweet.rules.Rule
 import com.tycz.tweedle.lib.tweets.stream.filter.Filter
 
 class MainActivity : AppCompatActivity() {
+
+    @ExperimentalApi
+    val model: MainViewModel by viewModels()
+
+    @ExperimentalApi
+    val a = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            model.getAccessToken(it.data!!.getStringExtra("oauth_token")!!,
+                it.data!!.getStringExtra("oauth_verifier")!!).observe(this, Observer {accessTokenResponse ->
+                    Log.d("Response",accessTokenResponse.toString())
+
+                //Securely store access token
+
+                val apiKey = ""
+                val apiSecret = ""
+
+                model.oAuth1 = OAuth1(apiKey, apiSecret, accessTokenResponse.oauthToken!!, accessTokenResponse.oauthTokenSecret!!)
+
+                val filter: Filter = Filter.Builder()
+                    .addOperator("from:TwitterDev")
+                    .build()
+
+                val map = HashMap<String, String>()
+                map["tweet.fields"] = "lang"
+                map["expansions"] = "attachments.media_keys"
+                map["media.fields"] = "preview_image_url,url"
+
+                model.getRecentTweets(
+                    filter.filter,
+                    map
+                ).observe(this, Observer {resp ->
+                    when (resp) {
+                        is Response.Error -> {
+                            resp.exception
+                        }
+                        is Response.Success -> resp.data!!.data?.get(0)
+                    }
+                })
+
+//                model.getTweet(1299418846990921728).observe(this, Observer {response ->
+//                    Log.d("Response2",response.toString())
+//                    when(response){
+//                        is Response.Error -> {response.exception}
+//                        is Response.Success -> response.data
+//                    }
+//                })
+            })
+        }else{
+            //Error with authorizing
+        }
+    }
+
+    @ExperimentalApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val model: MainViewModel by viewModels()
-
         // Add your own Authorization token then uncomment the different sections to see example usage
-
         val token = ""
+        val apiKey = ""
+        val apiSecret = ""
+        model.oAuth2 = OAuth2(token)
+        val oauthToken = ""
+        val oauthTokenSecret = ""
+        model.oAuth1 = OAuth1(apiKey,apiSecret,oauthToken, oauthTokenSecret)
+
+//        model.authOAuth = AuthenticationOAuth(apiKey, apiSecret)
         //region Get Single Tweet
-//        model.getTweet(token, 1299418846990921728).observe(this, Observer {
+//        model.getTweet(1299418846990921728).observe(this, Observer {
+//            when(it){
+//                is Response.Error -> {it.exception}
+//                is Response.Success -> it.data
+//            }
+//        })
+        //endregion
+
+        //region Get multiple tweets
+//        model.getMultipleTweets(mutableListOf(1299418846990921728, 1387852271938150408)).observe(this, Observer {
 //            when(it){
 //                is Response.Error -> {it.exception}
 //                is Response.Success -> it.data
@@ -44,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 //        filters.add(addRule)
 //        val rule = Rule(filters)
 //
-//        model.addRule(token, rule).observe(this, Observer {
+//        model.addRule(rule).observe(this, Observer {
 //            when(it){
 //                is Response.Error -> {it.exception}
 //                is Response.Success -> it.data
@@ -62,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 //        val delete = Delete(list)
 //        val deleteRule = DeleteRule(delete)
 //
-//        model.deleteRule(token,
+//        model.deleteRule(
 //            deleteRule).observe(this, Observer {
 //            when(it){
 //                is Response.Error -> {it.exception}
@@ -72,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         //endregion
 
         //region Streaming
-//        model.getStreamTweets(token).observe(this, Observer {
+//        model.getStreamTweets().observe(this, Observer {
 //            when(it){
 //                is Response.Success -> Log.d("TWEET", it.data.data.text)
 //                is Response.Error -> {
@@ -88,27 +161,40 @@ class MainActivity : AppCompatActivity() {
         //endregion
 
         //region Recent Tweets
-        val map = HashMap<String, String>()
-        map["tweet.fields"] = "lang"
-        map["expansions"] = "attachments.media_keys"
-        map["media.fields"] = "preview_image_url,url"
+//        val map = HashMap<String, String>()
+//        map["tweet.fields"] = "lang"
+//        map["expansions"] = "attachments.media_keys"
+//        map["media.fields"] = "preview_image_url,url"
+//
+//        val filter: Filter = Filter.Builder()
+//            .addOperator("from:TwitterDev")
+//            .build()
+//
+//        model.getRecentTweets(
+//            filter.filter,
+//            map
+//        ).observe(this, Observer {
+//            when (it) {
+//                is Response.Error -> {
+//                    it.exception
+//                }
+//                is Response.Success -> it.data!!.data?.get(0)
+//            }
+//        })
+        //endregion
 
-        val filter: Filter = Filter.Builder()
-            .addOperator("from:TwitterDev")
-            .build()
-
-        model.getRecentTweets(
-            token,
-            filter.filter,
-            map
-        ).observe(this, Observer {
-            when (it) {
-                is Response.Error -> {
-                    it.exception
-                }
-                is Response.Success -> it.data!!.data[0]
-            }
-        })
+        //region Authentication
+//        val callbackUrl = ""
+//        model.authenticate(callbackUrl).observe(this, Observer {
+//            if(it.error == null){
+//                val intent = Intent(this, TwitterAuthActivity::class.java)
+//                intent.putExtra("oauthToken", it.oauthToken)
+//                a.launch(intent)
+//            }else{
+//                //Check error
+//            }
+//
+//        })
         //endregion
 
     }
