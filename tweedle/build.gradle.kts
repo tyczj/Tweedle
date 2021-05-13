@@ -1,9 +1,13 @@
+import org.gradle.api.tasks.bundling.Jar
+import java.util.*
+
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("kotlin-android-extensions")
     id("kotlinx-serialization")
     id("maven-publish")
+    id("signing")
 }
 
 repositories {
@@ -11,6 +15,37 @@ repositories {
     google()
     jcenter()
     mavenCentral()
+}
+
+//ext["signing.keyId"] = null
+//ext["signing.password"] = null
+//ext["signing.secretKeyRingFile"] = null
+//ext["ossrhUsername"] = null
+//ext["ossrhPassword"] = null
+
+// Grabbing secrets from local.properties file or from environment variables, which could be used on CI
+//val secretPropsFile = project.rootProject.file("local.properties")
+var properties:Properties? = null
+//var properties = Properties().apply {
+//    load(it)
+//}
+
+
+val secretPropsFile = project.rootProject.file("local.properties")
+if (secretPropsFile.exists()) {
+    secretPropsFile.reader().use {
+        properties = Properties().apply {
+            load(it)
+        }
+    }
+}
+
+ext["signing.keyId"] = properties?.get("signing.keyId").toString()
+ext["signing.password"] = properties?.get("signing.password").toString()
+ext["signing.secretKeyRingFile"] = properties?.get("signing.secretKeyRingFile").toString()
+
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
 }
 
 group = "com.tycz"
@@ -105,13 +140,32 @@ afterEvaluate {
     publishing {
         repositories {
             maven {
-                url = uri("https://maven.pkg.jetbrains.space/tyczj/p/vqi18/tweedle")
+                name = "sonatype"
+                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 credentials {
-                    username = "tyczj359"
-                    password = ""
+                    username = properties["ossrhUsername"]?.toString()
+                    password = properties["ossrhPassword"]?.toString()
                 }
             }
         }
+
+        publications.withType<MavenPublication> {
+
+            artifact(javadocJar.get())
+
+            pom{
+                name.set("Tweedle")
+                description.set("Tweedle is an Android library built around the Twitter v2 API built fully in Kotlin using Kotlin Coroutines")
+                url.set("https://github.com/tyczj/Tweedle")
+                scm {
+                    url.set("https://github.com/tyczj/Tweedle")
+                }
+            }
+        }
+    }
+
+    signing {
+        sign(publishing.publications)
     }
 }
 
