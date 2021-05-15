@@ -13,42 +13,14 @@ plugins {
 repositories {
     gradlePluginPortal()
     google()
-    jcenter()
     mavenCentral()
 }
-
-//ext["signing.keyId"] = null
-//ext["signing.password"] = null
-//ext["signing.secretKeyRingFile"] = null
-//ext["ossrhUsername"] = null
-//ext["ossrhPassword"] = null
-
-// Grabbing secrets from local.properties file or from environment variables, which could be used on CI
-//val secretPropsFile = project.rootProject.file("local.properties")
-var properties:Properties? = null
-//var properties = Properties().apply {
-//    load(it)
-//}
-
-
-val secretPropsFile = project.rootProject.file("local.properties")
-if (secretPropsFile.exists()) {
-    secretPropsFile.reader().use {
-        properties = Properties().apply {
-            load(it)
-        }
-    }
-}
-
-ext["signing.keyId"] = properties?.get("signing.keyId").toString()
-ext["signing.password"] = properties?.get("signing.password").toString()
-ext["signing.secretKeyRingFile"] = properties?.get("signing.secretKeyRingFile").toString()
 
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
-group = "com.tycz"
+group = "io.github.tyczj"
 version = "0.3.0"
 
 kotlin {
@@ -103,7 +75,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-ios:1.5.1")
             }
         }
-        val iosTest by getting
+//        val iosTest by getting
     }
 }
 
@@ -143,8 +115,8 @@ afterEvaluate {
                 name = "sonatype"
                 url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 credentials {
-                    username = properties["ossrhUsername"]?.toString()
-                    password = properties["ossrhPassword"]?.toString()
+                    username = rootProject.ext["ossrhUsername"]?.toString()
+                    password = rootProject.ext["ossrhPassword"]?.toString()
                 }
             }
         }
@@ -162,10 +134,6 @@ afterEvaluate {
                 }
             }
         }
-    }
-
-    signing {
-        sign(publishing.publications)
     }
 }
 
@@ -185,3 +153,11 @@ val packForXcode by tasks.creating(Sync::class) {
     into(targetDir)
 }
 tasks.getByName("build").dependsOn(packForXcode)
+
+ext["signing.keyId"] = rootProject.ext["signing.keyId"]?.toString()
+ext["signing.password"] = rootProject.ext["signing.password"]?.toString()
+ext["signing.secretKeyRingFile"] = rootProject.ext["signing.secretKeyRingFile"]?.toString()
+
+signing {
+    sign(publishing.publications)
+}
