@@ -1,10 +1,8 @@
 import org.gradle.api.tasks.bundling.Jar
-import java.util.*
 
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    id("kotlin-android-extensions")
     id("kotlinx-serialization")
     id("maven-publish")
     id("signing")
@@ -21,7 +19,7 @@ val javadocJar by tasks.registering(Jar::class) {
 }
 
 group = "io.github.tyczj"
-version = "0.3.0"
+version = "0.3.4"
 
 kotlin {
     android{
@@ -40,8 +38,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:1.5.1")
                 implementation("io.ktor:ktor-client-json:1.5.1")
                 implementation("io.ktor:ktor-client-serialization:1.5.1")
-                implementation("io.ktor:ktor-client-logging:1.5.1")
-                implementation("ch.qos.logback:logback-classic:1.2.3")
+//                implementation("io.ktor:ktor-client-logging:1.5.1")
+//                implementation("ch.qos.logback:logback-classic:1.2.3")
 //                implementation("com.squareup.okio:okio:2.10.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt"){
                     version {
@@ -129,6 +127,19 @@ afterEvaluate {
                 name.set("Tweedle")
                 description.set("Tweedle is an Android library built around the Twitter v2 API built fully in Kotlin using Kotlin Coroutines")
                 url.set("https://github.com/tyczj/Tweedle")
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("tyczj")
+                        name.set("Jeff Tycz")
+                        email.set("tyczj359@gmail.com")
+                    }
+                }
                 scm {
                     url.set("https://github.com/tyczj/Tweedle")
                 }
