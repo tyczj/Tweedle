@@ -1,20 +1,25 @@
+import org.gradle.api.tasks.bundling.Jar
+
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    id("kotlin-android-extensions")
     id("kotlinx-serialization")
     id("maven-publish")
+    id("signing")
 }
 
 repositories {
     gradlePluginPortal()
     google()
-    jcenter()
     mavenCentral()
 }
 
-group = "com.tycz"
-version = "0.3.0"
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+
+group = "io.github.tyczj"
+version = "0.3.4"
 
 kotlin {
     android{
@@ -33,8 +38,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:1.5.1")
                 implementation("io.ktor:ktor-client-json:1.5.1")
                 implementation("io.ktor:ktor-client-serialization:1.5.1")
-                implementation("io.ktor:ktor-client-logging:1.5.1")
-                implementation("ch.qos.logback:logback-classic:1.2.3")
+//                implementation("io.ktor:ktor-client-logging:1.5.1")
+//                implementation("ch.qos.logback:logback-classic:1.2.3")
 //                implementation("com.squareup.okio:okio:2.10.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt"){
                     version {
@@ -68,7 +73,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-ios:1.5.1")
             }
         }
-        val iosTest by getting
+//        val iosTest by getting
     }
 }
 
@@ -105,10 +110,38 @@ afterEvaluate {
     publishing {
         repositories {
             maven {
-                url = uri("https://maven.pkg.jetbrains.space/tyczj/p/vqi18/tweedle")
+                name = "sonatype"
+                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 credentials {
-                    username = "tyczj359"
-                    password = ""
+                    username = rootProject.ext["ossrhUsername"]?.toString()
+                    password = rootProject.ext["ossrhPassword"]?.toString()
+                }
+            }
+        }
+
+        publications.withType<MavenPublication> {
+
+            artifact(javadocJar.get())
+
+            pom{
+                name.set("Tweedle")
+                description.set("Tweedle is an Android library built around the Twitter v2 API built fully in Kotlin using Kotlin Coroutines")
+                url.set("https://github.com/tyczj/Tweedle")
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("tyczj")
+                        name.set("Jeff Tycz")
+                        email.set("tyczj359@gmail.com")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/tyczj/Tweedle")
                 }
             }
         }
@@ -131,3 +164,11 @@ val packForXcode by tasks.creating(Sync::class) {
     into(targetDir)
 }
 tasks.getByName("build").dependsOn(packForXcode)
+
+ext["signing.keyId"] = rootProject.ext["signing.keyId"]?.toString()
+ext["signing.password"] = rootProject.ext["signing.password"]?.toString()
+ext["signing.secretKeyRingFile"] = rootProject.ext["signing.secretKeyRingFile"]?.toString()
+
+signing {
+    sign(publishing.publications)
+}
