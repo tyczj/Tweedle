@@ -15,8 +15,9 @@ import com.tycz.tweedle.lib.dtos.tweet.rules.DeleteRule
 import com.tycz.tweedle.lib.dtos.tweet.rules.DeleteRuleResponse
 import com.tycz.tweedle.lib.dtos.tweet.rules.RuleResponse
 import com.tycz.tweedle.lib.dtos.user.Payload
+import com.tycz.tweedle.lib.dtos.user.UserPayload
 import com.tycz.tweedle.lib.tweets.lookup.TweetsLookup
-import com.tycz.tweedle.lib.lookup.UserLookup
+import com.tycz.tweedle.lib.user.UserLookup
 import com.tycz.tweedle.lib.tweets.stream.TweetsStream
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 class MainViewModel: ViewModel() {
 
     private lateinit var _tweetLookup:TweetsLookup
-    private lateinit var _userLookup:UserLookup
+    private lateinit var _userLookup: UserLookup
     private lateinit var _tweetStream:TweetsStream
     private lateinit var _authentication:Authentication
 
@@ -68,8 +69,8 @@ class MainViewModel: ViewModel() {
         return liveData
     }
 
-    fun getUser(userId:Long):LiveData<Response<Payload?>>{
-        val liveData:MutableLiveData<Response<Payload?>> = MutableLiveData<Response<Payload?>>()
+    fun getUser(userId:Long):LiveData<Response<UserPayload?>>{
+        val liveData:MutableLiveData<Response<UserPayload?>> = MutableLiveData<Response<UserPayload?>>()
         viewModelScope.launch {
             val response = _userLookup.getUserById(userId)
             liveData.postValue(response)
@@ -77,8 +78,8 @@ class MainViewModel: ViewModel() {
         return liveData
     }
 
-    fun getUsers(userIds:List<Long>):LiveData<Response<List<Payload>?>>{
-        val liveData:MutableLiveData<Response<List<Payload>?>> = MutableLiveData<Response<List<Payload>?>>()
+    fun getUsers(userIds:List<Long>):LiveData<Response<Payload?>>{
+        val liveData:MutableLiveData<Response<Payload?>> = MutableLiveData<Response<Payload?>>()
         viewModelScope.launch {
             val response = _userLookup.getUsersByIds(userIds)
             liveData.postValue(response)
@@ -86,8 +87,8 @@ class MainViewModel: ViewModel() {
         return liveData
     }
 
-    fun getUserByUsername(username:String):LiveData<Response<Payload?>>{
-        val liveData:MutableLiveData<Response<Payload?>> = MutableLiveData<Response<Payload?>>()
+    fun getUserByUsername(username:String):LiveData<Response<UserPayload?>>{
+        val liveData:MutableLiveData<Response<UserPayload?>> = MutableLiveData<Response<UserPayload?>>()
         viewModelScope.launch {
             val response = _userLookup.getUserByUsername(username)
             liveData.postValue(response)
@@ -95,8 +96,8 @@ class MainViewModel: ViewModel() {
         return liveData
     }
 
-    fun getUsersByUsernames(usernames:List<String>):LiveData<Response<List<Payload>?>>{
-        val liveData:MutableLiveData<Response<List<Payload>?>> = MutableLiveData<Response<List<Payload>?>>()
+    fun getUsersByUsernames(usernames:List<String>):LiveData<Response<Payload?>>{
+        val liveData:MutableLiveData<Response<Payload?>> = MutableLiveData<Response<Payload?>>()
         viewModelScope.launch {
             val response = _userLookup.getUsersByUsernames(usernames)
             liveData.postValue(response)

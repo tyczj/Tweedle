@@ -11,6 +11,8 @@ internal class SignatureBuilder {
     companion object{
         const val HTTP_POST = "POST"
         const val HTTP_GET = "GET"
+        const val HTTP_PUT = "PUT"
+        const val HTTP_DELETE = "DELETE"
 
         const val AUTH_REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token"
     }

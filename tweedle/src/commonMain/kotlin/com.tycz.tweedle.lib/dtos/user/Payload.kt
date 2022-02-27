@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Payload(
     val `data`: List<User>,
-    val includes: Includes?
+    val includes: Includes? = null
 )

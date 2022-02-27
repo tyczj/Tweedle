@@ -29,7 +29,7 @@ data class User(
     /**
      * The unique identifier of this user.
      */
-    val id: String,
+    val id: String? = null,
     /**
      * The location specified in the user's profile, if the user provided one. As this is a freeform value,
      * it may not indicate a valid location, but it may be fuzzily evaluated when performing searches with location queries.

@@ -9,6 +9,7 @@ import com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
 import com.tycz.tweedle.lib.testApi
 import com.tycz.tweedle.lib.tweets.lookup.TweetsLookup
 import com.tycz.tweedle.lib.tweets.stream.filter.Filter
+import com.tycz.tweedle.lib.user.UserLookup
 import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -23,7 +24,6 @@ class AuthenticationTests {
     val oauthSecret = ""
 
     @BeforeTest
-
 
     @ExperimentalApi
     @Test
@@ -61,6 +61,24 @@ class AuthenticationTests {
 
         val tweetLookup = TweetsLookup(oauth)
         val response:Response<MultipleTweetPayload?> = tweetLookup.getRecentTweets(filter.filter,map)
+        assertTrue(response is Response.Success)
+    }
+
+    @ExperimentalApi
+    @Test
+    fun testHideTweetOAuth1() = runBlocking{
+        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+        val tweetLookup = TweetsLookup(oauth)
+        val response = tweetLookup.hideTweet(1116135074787803136)
+        assertTrue(response is Response.Success)
+    }
+
+    @ExperimentalApi
+    @Test
+    fun testUnHideTweetOAuth1() = runBlocking{
+        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+        val tweetLookup = TweetsLookup(oauth)
+        val response = tweetLookup.unhideTweet(1360300811998253056)
         assertTrue(response is Response.Success)
     }
 }

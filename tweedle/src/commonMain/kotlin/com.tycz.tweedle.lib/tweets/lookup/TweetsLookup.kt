@@ -89,14 +89,19 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    suspend fun hideTweet(tweetId:Long):Response<HttpResponse?> {
-
+    @ExperimentalApi
+    internal suspend fun hideTweet(tweetId:Long):Response<HttpResponse?> {
+        //TODO does not work wth OAuth1
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
+            if(oAuthBuilder is OAuth1){
+                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_PUT
+                oAuthBuilder.url = url
+            }
             val builder = oAuthBuilder.buildRequest()
             builder.url(URLBuilder(url).build())
             builder.contentType(ContentType.Application.Json)
-            builder.body = "{\\n    \\\"hidden\\\": true\\n}"
+            builder.body = "{ \"hidden\": true }"
             val response = _client.put<HttpResponse>(builder)
             Response.Success(response)
         }catch (e:Exception){
@@ -104,14 +109,19 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    suspend fun unhideTweet(tweetId:Long):Response<HttpResponse?> {
-
+    @ExperimentalApi
+    internal suspend fun unhideTweet(tweetId:Long):Response<HttpResponse?> {
+        //TODO does not work wth OAuth1
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
+            if(oAuthBuilder is OAuth1){
+                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_PUT
+                oAuthBuilder.url = url
+            }
             val builder = oAuthBuilder.buildRequest()
             builder.url(URLBuilder(url).build())
             builder.contentType(ContentType.Application.Json)
-            builder.body = "{\\n    \\\"hidden\\\": false\\n}"
+            builder.body = "{ \"hidden\": false }"
             val response = _client.put<HttpResponse>(builder)
             Response.Success(response)
         }catch (e:Exception){
