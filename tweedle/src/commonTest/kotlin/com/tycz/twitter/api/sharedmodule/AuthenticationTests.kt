@@ -2,18 +2,16 @@ package com.tycz.twitter.api.sharedmodule
 
 import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
-import com.tycz.tweedle.lib.authentication.Authentication
+import com.tycz.tweedle.lib.authentication.Authentication2
 import com.tycz.tweedle.lib.authentication.oauth.OAuth1
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2Bearer
 import com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
 import com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
-import com.tycz.tweedle.lib.testApi
 import com.tycz.tweedle.lib.tweets.lookup.TweetsLookup
 import com.tycz.tweedle.lib.tweets.stream.filter.Filter
-import com.tycz.tweedle.lib.user.UserLookup
 import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class AuthenticationTests {
@@ -67,7 +65,7 @@ class AuthenticationTests {
     @ExperimentalApi
     @Test
     fun testHideTweetOAuth1() = runBlocking{
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+        val oauth = OAuth2Bearer("")
         val tweetLookup = TweetsLookup(oauth)
         val response = tweetLookup.hideTweet(1116135074787803136)
         assertTrue(response is Response.Success)
@@ -76,9 +74,16 @@ class AuthenticationTests {
     @ExperimentalApi
     @Test
     fun testUnHideTweetOAuth1() = runBlocking{
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+        val oauth = OAuth2Bearer("")
         val tweetLookup = TweetsLookup(oauth)
-        val response = tweetLookup.unhideTweet(1360300811998253056)
+        val response = tweetLookup.unhideTweet(1116135074787803136)
+        assertTrue(response is Response.Success)
+    }
+
+    @Test
+    fun testRefreshToken() = runBlocking {
+        val auth = Authentication2("", "")
+        val response = auth.refreshToken("")
         assertTrue(response is Response.Success)
     }
 }

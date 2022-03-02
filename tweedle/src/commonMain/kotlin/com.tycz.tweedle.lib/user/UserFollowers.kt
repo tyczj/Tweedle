@@ -11,6 +11,8 @@ import com.tycz.tweedle.lib.dtos.user.follows.FollowingPayload
 import com.tycz.tweedle.lib.urlEncodeString
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class UserFollowers(private val oAuthBuilder: IOAuthBuilder) {
 
@@ -96,23 +98,24 @@ class UserFollowers(private val oAuthBuilder: IOAuthBuilder) {
     /**
      * Follow user
      *
+     * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
+     *
+     * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The authenticated user ID who you would like to initiate the follow on behalf of
      * @param userIdToFollow The user ID of the user that you would like the id to follow.
      */
     @OptIn(ExperimentalApi::class)
     internal suspend fun followUser(userId: Long, userIdToFollow: Long): Response<FollowingPayload?>{
-        //TODO 403 error
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/following"
 
             if(oAuthBuilder is OAuth1){
-                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_POST
-                oAuthBuilder.url = url
+                throw IllegalStateException("This method currently only works with OAuth2")
             }
             val builder = oAuthBuilder.buildRequest()
             builder.url(URLBuilder(url).build())
             builder.contentType(ContentType.Application.Json)
-            builder.body = "{\"target_user_id\": \"$userIdToFollow\"}"
+            builder.body = JsonObject(mapOf("target_user_id" to JsonPrimitive(userIdToFollow.toString())))
             val response = _client.post<FollowingPayload>(builder)
             Response.Success(response)
         }catch (e: Exception){
@@ -123,18 +126,19 @@ class UserFollowers(private val oAuthBuilder: IOAuthBuilder) {
     /**
      * Unfollow user
      *
+     * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
+     *
+     * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The user ID of the user that you would like the id to follow.
      * @param userIdToUnfollow The user ID of the user that you would like the to unfollow.
      */
     @OptIn(ExperimentalApi::class)
-    internal suspend fun unfollowUser(userId: Long, userIdToUnfollow: Long): Response<FollowingPayload?>{
-        //TODO 403 error
+    suspend fun unfollowUser(userId: Long, userIdToUnfollow: Long): Response<FollowingPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/following/$userIdToUnfollow"
 
             if(oAuthBuilder is OAuth1){
-                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_DELETE
-                oAuthBuilder.url = url
+                throw IllegalStateException("This method currently only works with OAuth2")
             }
 
             val builder = oAuthBuilder.buildRequest()

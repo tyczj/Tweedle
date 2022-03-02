@@ -3,6 +3,7 @@ package com.tycz.twitter.api.sharedmodule
 import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.authentication.oauth.OAuth1
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2Bearer
 import com.tycz.tweedle.lib.user.UserFollowers
 import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
@@ -41,7 +42,9 @@ class UserFollowersTests {
 
     @Test
     fun followTest() = runBlocking {
-        val userId = 0L
+        val oauth = OAuth2Bearer("")
+        userFollowers = UserFollowers(oauth)
+        val userId = 146633079
         val userToFollowId = 2244994945
         val response = userFollowers.followUser(userId.toLong(), userToFollowId)
         assertTrue(response is Response.Success)
@@ -49,7 +52,9 @@ class UserFollowersTests {
 
     @Test
     fun unfollowTest() = runBlocking {
-        val userId = 0L
+        val oauth = OAuth2Bearer("")
+        userFollowers = UserFollowers(oauth)
+        val userId = 146633079
         val userToFollowId = 2244994945
         val response = userFollowers.unfollowUser(userId.toLong(), userToFollowId)
         assertTrue(response is Response.Success)

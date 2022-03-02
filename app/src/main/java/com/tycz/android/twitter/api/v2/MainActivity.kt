@@ -2,7 +2,6 @@ package com.tycz.android.twitter.api.v2
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -10,13 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
-import com.tycz.tweedle.lib.authentication.oauth.AuthenticationOAuth
 import com.tycz.tweedle.lib.authentication.oauth.OAuth1
-import com.tycz.tweedle.lib.authentication.oauth.OAuth2
-import com.tycz.tweedle.lib.dtos.tweet.Add
-import com.tycz.tweedle.lib.dtos.tweet.rules.Delete
-import com.tycz.tweedle.lib.dtos.tweet.rules.DeleteRule
-import com.tycz.tweedle.lib.dtos.tweet.rules.Rule
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2Bearer
 import com.tycz.tweedle.lib.tweets.stream.filter.Filter
 
 class MainActivity : AppCompatActivity() {
@@ -67,6 +61,21 @@ class MainActivity : AppCompatActivity() {
 //                    }
 //                })
             })
+        }else{
+            //Error with authorizing
+        }
+    }
+
+    @OptIn(ExperimentalApi::class)
+    val b = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK){
+            model.getOAuth2AccessToken(it.data!!.getStringExtra("code")!!, it.data!!.getStringExtra("challenge")!!).observe(this) { oAuth2Response ->
+                Log.d("Response",oAuth2Response.toString())
+                if(oAuth2Response is Response.Success){
+                    //Save token information
+                    model.oAuth2 = OAuth2Bearer(oAuth2Response.data!!.access_token)
+                }
+            }
         }else{
             //Error with authorizing
         }
@@ -195,6 +204,12 @@ class MainActivity : AppCompatActivity() {
 //            }
 //
 //        })
+        //endregion
+
+        //region OAuth2 PKCE
+        val intent = Intent(this, TwitterOAuth2Activity::class.java)
+        intent.putExtra("clientId", "")
+        b.launch(intent)
         //endregion
 
     }
