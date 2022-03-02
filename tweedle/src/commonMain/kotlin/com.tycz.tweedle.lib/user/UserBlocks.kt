@@ -11,6 +11,8 @@ import com.tycz.tweedle.lib.dtos.user.blocks.BlockingPayload
 import com.tycz.tweedle.lib.urlEncodeString
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class UserBlocks(private val oAuthBuilder: IOAuthBuilder) {
 
@@ -49,19 +51,28 @@ class UserBlocks(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
+    /**
+     * Block user
+     *
+     * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
+     *
+     * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
+     * @param userId User ID to perform the block on behalf of
+     * @param userIdToBlock User ID to block
+     * @return
+     */
     @OptIn(ExperimentalApi::class)
-    internal suspend fun blockUser(userId: Long, userIdToBlock: Long): Response<BlockingPayload?> {
+    suspend fun blockUser(userId: Long, userIdToBlock: Long): Response<BlockingPayload?> {
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/blocking"
 
             if(oAuthBuilder is OAuth1){
-                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_POST
-                oAuthBuilder.url = url
+                throw IllegalStateException("This method currently only works with OAuth2")
             }
             val builder = oAuthBuilder.buildRequest()
             builder.url(URLBuilder(url).build())
             builder.contentType(ContentType.Application.Json)
-            builder.body = "{\"target_user_id\": \"$userIdToBlock\"}"
+            builder.body = JsonObject(mapOf("target_user_id" to JsonPrimitive(userIdToBlock.toString())))
             val response = _client.put<BlockingPayload>(builder)
             Response.Success(response)
         }catch (e: Exception){
@@ -69,14 +80,23 @@ class UserBlocks(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
+    /**
+     * Unblock user
+     *
+     * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
+     *
+     * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
+     * @param userId User ID to perform the unblock on behalf of
+     * @param userIdToUnblock User ID to unblock
+     * @return
+     */
     @OptIn(ExperimentalApi::class)
-    internal suspend fun unblockUser(userId: Long, userIdToUnblock: Long): Response<BlockingPayload?>{
+    suspend fun unblockUser(userId: Long, userIdToUnblock: Long): Response<BlockingPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/blocking/$userIdToUnblock"
 
             if(oAuthBuilder is OAuth1){
-                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_DELETE
-                oAuthBuilder.url = url
+                throw IllegalStateException("This method currently only works with OAuth2")
             }
 
             val builder = oAuthBuilder.buildRequest()

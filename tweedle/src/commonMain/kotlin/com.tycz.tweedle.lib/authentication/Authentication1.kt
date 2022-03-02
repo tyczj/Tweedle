@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 /**
  * Class for authenticating with twitter
  */
-class Authentication @ExperimentalApi constructor(private val oAuth: OAuth1) {
+class Authentication1 @ExperimentalApi constructor(private val oAuth: OAuth1) {
     private val _client = TwitterClient.instance
 
     /**

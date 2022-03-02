@@ -11,6 +11,8 @@ import com.tycz.tweedle.lib.dtos.user.muting.MutingPayload
 import com.tycz.tweedle.lib.urlEncodeString
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class UserMuting(private val oAuthBuilder: IOAuthBuilder) {
 
@@ -58,24 +60,25 @@ class UserMuting(private val oAuthBuilder: IOAuthBuilder) {
     /**
      * Mute user
      *
+     * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
+     *
+     * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The user ID who you would like to initiate the mute on behalf of.
      * @param userIdToMute The user ID of the user that you would like to mute
      * @return
      */
     @OptIn(ExperimentalApi::class)
-    internal suspend fun muteUser(userId: Long, userIdToMute: Long): Response<MutedPayload?> {
-        //TODO
+    suspend fun muteUser(userId: Long, userIdToMute: Long): Response<MutedPayload?> {
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/muting"
 
             if(oAuthBuilder is OAuth1){
-                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_POST
-                oAuthBuilder.url = url
+                throw IllegalStateException("This method currently only works with OAuth2")
             }
             val builder = oAuthBuilder.buildRequest()
             builder.url(URLBuilder(url).build())
             builder.contentType(ContentType.Application.Json)
-            builder.body = "{\"target_user_id\": \"$userIdToMute\"}"
+            builder.body = JsonObject(mapOf("target_user_id" to JsonPrimitive(userIdToMute.toString())))
             val response = _client.put<MutedPayload>(builder)
             Response.Success(response)
         }catch (e: Exception){
@@ -90,8 +93,7 @@ class UserMuting(private val oAuthBuilder: IOAuthBuilder) {
      * @return
      */
     @OptIn(ExperimentalApi::class)
-    internal suspend fun unmuteUser(userId: Long, userIdToUnmute: Long): Response<MutedPayload?>{
-        //TODO
+    suspend fun unmuteUser(userId: Long, userIdToUnmute: Long): Response<MutedPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/muting/$userIdToUnmute"
 

@@ -12,6 +12,9 @@ import com.tycz.tweedle.lib.urlEncodeString
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
 
@@ -89,19 +92,27 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
+    /**
+     * Hide tweet
+     *
+     * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
+     * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
+     * @throws IllegalStateException
+     * @param tweetId ID of the tweet to hide
+     * @return
+     */
+    @OptIn(ExperimentalSerializationApi::class)
     @ExperimentalApi
-    internal suspend fun hideTweet(tweetId:Long):Response<HttpResponse?> {
-        //TODO does not work wth OAuth1
+    suspend fun hideTweet(tweetId:Long):Response<HttpResponse?> {
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
             if(oAuthBuilder is OAuth1){
-                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_PUT
-                oAuthBuilder.url = url
+                throw IllegalStateException("This method currently only works with OAuth2")
             }
             val builder = oAuthBuilder.buildRequest()
             builder.url(URLBuilder(url).build())
             builder.contentType(ContentType.Application.Json)
-            builder.body = "{ \"hidden\": true }"
+            builder.body = JsonObject(mapOf("hidden" to JsonPrimitive(true)))
             val response = _client.put<HttpResponse>(builder)
             Response.Success(response)
         }catch (e:Exception){
@@ -109,19 +120,27 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
+    /**
+     * Unhide tweet
+     *
+     * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
+     * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
+     * @throws IllegalStateException
+     * @param tweetId ID of the tweet to unhide
+     * @return
+     */
+    @OptIn(ExperimentalSerializationApi::class)
     @ExperimentalApi
-    internal suspend fun unhideTweet(tweetId:Long):Response<HttpResponse?> {
-        //TODO does not work wth OAuth1
+    suspend fun unhideTweet(tweetId:Long):Response<HttpResponse?> {
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
             if(oAuthBuilder is OAuth1){
-                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_PUT
-                oAuthBuilder.url = url
+                throw IllegalStateException("This method currently only works with OAuth2")
             }
             val builder = oAuthBuilder.buildRequest()
             builder.url(URLBuilder(url).build())
             builder.contentType(ContentType.Application.Json)
-            builder.body = "{ \"hidden\": false }"
+            builder.body = JsonObject(mapOf("hidden" to JsonPrimitive(false)))
             val response = _client.put<HttpResponse>(builder)
             Response.Success(response)
         }catch (e:Exception){

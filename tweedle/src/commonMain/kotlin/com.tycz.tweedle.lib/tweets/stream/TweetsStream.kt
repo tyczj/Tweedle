@@ -2,7 +2,7 @@ package com.tycz.tweedle.lib.tweets.stream
 
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.api.TwitterClient
-import com.tycz.tweedle.lib.authentication.oauth.OAuth2
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2Bearer
 import com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
 import com.tycz.tweedle.lib.dtos.tweet.rules.*
 import io.ktor.client.call.*
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-class TweetsStream(private val oAuth: OAuth2){
+class TweetsStream(private val oAuth: OAuth2Bearer){
 
     private val _client = TwitterClient.instance
     private var _streamChannel: ByteReadChannel? = null

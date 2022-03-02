@@ -24,6 +24,9 @@ internal class TwitterClient private constructor() {
         const val BASE_URL = "https://api.twitter.com/2/"
         const val TWEETS_ENDPOINT = "tweets"
         const val USERS_ENDPOINT = "users"
+        const val OAUTH2_ENDPOINT = "oauth2"
+        const val OAUTH2_TOKEN_ENDPOINT = "token"
+        const val OAUTH2_REVOKE_ENDPOINT = "revoke"
 
         const val AUTH_BASE_URL = "https://api.twitter.com/oauth/"
         const val REQUEST_TOKEN_ENDPOINT = "request_token"

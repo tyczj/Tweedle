@@ -3,11 +3,9 @@ package com.tycz.android.twitter.api.v2
 import androidx.lifecycle.*
 import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
-import com.tycz.tweedle.lib.authentication.AccessTokenResponse
-import com.tycz.tweedle.lib.authentication.Authentication
-import com.tycz.tweedle.lib.authentication.TokenResponse
+import com.tycz.tweedle.lib.authentication.*
 import com.tycz.tweedle.lib.authentication.oauth.OAuth1
-import com.tycz.tweedle.lib.authentication.oauth.OAuth2
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2Bearer
 import com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
 import com.tycz.tweedle.lib.dtos.tweet.rules.Rule
 import com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
@@ -27,12 +25,13 @@ class MainViewModel: ViewModel() {
     private lateinit var _tweetLookup:TweetsLookup
     private lateinit var _userLookup: UserLookup
     private lateinit var _tweetStream:TweetsStream
-    private lateinit var _authentication:Authentication
+    private lateinit var _authentication:Authentication1
+    private lateinit var _authentication2: Authentication2
 
     var authOAuth: OAuth1? = null
             set(value) {
                 value?.let {
-                    _authentication = Authentication(value)
+                    _authentication = Authentication1(value)
                 }
             }
 
@@ -43,7 +42,7 @@ class MainViewModel: ViewModel() {
                 _userLookup = UserLookup(value)
             }
         }
-    var oAuth2: OAuth2? = null
+    var oAuth2: OAuth2Bearer? = null
         set(value) {
             value?.let {
 //                _tweetLookup = TweetsLookup(value)
@@ -157,4 +156,16 @@ class MainViewModel: ViewModel() {
         }
         return liveData
     }
+
+    fun getOAuth2AccessToken(code: String, challenge: String):LiveData<Response<OAuth2PKCEResponse?>>{
+        _authentication2 = Authentication2(code, "")
+        val liveData:MutableLiveData<Response<OAuth2PKCEResponse?>> = MutableLiveData<Response<OAuth2PKCEResponse?>>()
+        viewModelScope.launch {
+            val response = _authentication2.getAccessToken("", challenge)
+            liveData.postValue(response)
+        }
+        return liveData
+    }
+
+
 }
