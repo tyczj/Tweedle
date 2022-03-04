@@ -42,7 +42,6 @@ class Authentication2 (private val code: String, private val clientId: String) {
         return try{
             val builder = HttpRequestBuilder()
             builder.url(URLBuilder(url).build())
-            builder.contentType(ContentType.Application.FormUrlEncoded)
             val response = _client.post<OAuth2PKCEResponse>(builder)
             Response.Success(response)
         }catch (e: Exception){

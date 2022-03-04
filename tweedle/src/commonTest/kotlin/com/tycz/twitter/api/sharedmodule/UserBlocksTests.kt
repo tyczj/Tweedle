@@ -3,6 +3,7 @@ package com.tycz.twitter.api.sharedmodule
 import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.authentication.oauth.OAuth1
+import com.tycz.tweedle.lib.authentication.oauth.OAuth2Bearer
 import com.tycz.tweedle.lib.user.UserBlocks
 import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
@@ -36,11 +37,15 @@ class UserBlocksTests {
 
     @Test
     fun blockUserTest() = runBlocking {
-
+        val oauth = OAuth2Bearer("")
+        userBlocks = UserBlocks(oauth)
+        userBlocks.blockUser(0,0)
     }
 
     @Test
     fun unblockUserTest() = runBlocking {
-
+        val oauth = OAuth2Bearer("")
+        userBlocks = UserBlocks(oauth)
+        userBlocks.unblockUser(0, 0)
     }
 }
