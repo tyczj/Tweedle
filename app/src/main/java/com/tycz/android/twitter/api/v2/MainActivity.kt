@@ -69,7 +69,9 @@ class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalApi::class)
     val b = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
-            model.getOAuth2AccessToken(it.data!!.getStringExtra("code")!!, it.data!!.getStringExtra("challenge")!!).observe(this) { oAuth2Response ->
+            val clientId = ""
+            val callbackUrl = ""
+            model.getOAuth2AccessToken(it.data!!.getStringExtra("code")!!, it.data!!.getStringExtra("challenge")!!, clientId, callbackUrl).observe(this) { oAuth2Response ->
                 Log.d("Response",oAuth2Response.toString())
                 if(oAuth2Response is Response.Success){
                     //Save token information

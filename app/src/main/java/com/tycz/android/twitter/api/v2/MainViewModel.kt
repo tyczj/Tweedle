@@ -157,11 +157,11 @@ class MainViewModel: ViewModel() {
         return liveData
     }
 
-    fun getOAuth2AccessToken(code: String, challenge: String):LiveData<Response<OAuth2PKCEResponse?>>{
-        _authentication2 = Authentication2(code, "")
+    fun getOAuth2AccessToken(code: String, challenge: String, clientId: String, callbackUrl: String):LiveData<Response<OAuth2PKCEResponse?>>{
+        _authentication2 = Authentication2(code, clientId)
         val liveData:MutableLiveData<Response<OAuth2PKCEResponse?>> = MutableLiveData<Response<OAuth2PKCEResponse?>>()
         viewModelScope.launch {
-            val response = _authentication2.getAccessToken("", challenge)
+            val response = _authentication2.getAccessToken(callbackUrl, challenge)
             liveData.postValue(response)
         }
         return liveData

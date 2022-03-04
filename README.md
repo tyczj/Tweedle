@@ -265,7 +265,7 @@ To start using Tweedle, include the dependency in your `build.gradle`
 
 Common
 ```kotlin
-implementation("io.github.tyczj:tweedle:0.4.0")
+implementation("io.github.tyczj:tweedle:0.5.0")
 ```
 
 Android
@@ -274,5 +274,5 @@ android{
     debug { matchingFallbacks = ['release'] }
 }
 
-implementation 'io.github.tyczj:tweedle-android:0.4.0'
+implementation 'io.github.tyczj:tweedle-android:0.5.0'
 ```

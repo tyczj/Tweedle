@@ -19,7 +19,7 @@ val javadocJar by tasks.registering(Jar::class) {
 }
 
 group = "io.github.tyczj"
-version = "0.4.0"
+version = "0.5.0"
 
 kotlin {
     android{

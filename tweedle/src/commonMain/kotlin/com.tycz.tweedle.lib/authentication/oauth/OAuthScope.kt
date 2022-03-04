@@ -15,6 +15,8 @@ sealed class OAuthScope{
             is UserBlockReadScope -> "block.read"
             is UserBlockWriteScope -> "block.write"
             is OfflineAccessScope -> "offline.access"
+            is LikeRead -> "like.read"
+            is LikeWrite -> "like.write"
         }
 
     /**
@@ -71,5 +73,15 @@ sealed class OAuthScope{
      * Stay connected to your account until you revoke access.
      */
     object OfflineAccessScope: OAuthScope()
+
+    /**
+     * Tweets you’ve liked and likes you can view.
+     */
+    object LikeRead: OAuthScope()
+
+    /**
+     * Like and un-like Tweets for you.
+     */
+    object LikeWrite: OAuthScope()
 }
 

@@ -43,7 +43,9 @@ class TwitterOAuth2Activity: AppCompatActivity() {
                 OAuthScope.UserFollowsWriteScope,
                 OAuthScope.UserMuteReadScope,
                 OAuthScope.UserMuteWriteScope,
-                OAuthScope.UserReadScope
+                OAuthScope.UserReadScope,
+                OAuthScope.LikeWrite,
+                OAuthScope.LikeRead
             ), callbackUrl, _state, challenge)
 
         val webView: WebView = findViewById(R.id.webview)
