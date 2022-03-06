@@ -19,7 +19,7 @@ val javadocJar by tasks.registering(Jar::class) {
 }
 
 group = "io.github.tyczj"
-version = "0.5.0"
+version = "0.5.1"
 
 kotlin {
     android{
@@ -35,15 +35,15 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:1.5.1")
-                implementation("io.ktor:ktor-client-json:1.5.1")
-                implementation("io.ktor:ktor-client-serialization:1.5.1")
+                implementation("io.ktor:ktor-client-core:1.6.7")
+                implementation("io.ktor:ktor-client-json:1.6.7")
+                implementation("io.ktor:ktor-client-serialization:1.6.7")
 //                implementation("io.ktor:ktor-client-logging:1.5.1")
 //                implementation("ch.qos.logback:logback-classic:1.2.3")
 //                implementation("com.squareup.okio:okio:2.10.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt"){
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt"){
                     version {
-                        strictly("1.4.2-native-mt")
+                        strictly("1.6.0-native-mt")
                     }
                 }
             }
@@ -56,10 +56,10 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.core:core-ktx:1.3.2")
-                implementation("io.ktor:ktor-client-android:1.5.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2-native-mt")
-                implementation("com.github.scribejava:scribejava-apis:8.3.0")
+                implementation("androidx.core:core-ktx:1.7.0")
+                implementation("io.ktor:ktor-client-android:1.6.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+//                implementation("com.github.scribejava:scribejava-apis:8.3.0")
             }
         }
         val androidTest by getting {
@@ -70,7 +70,7 @@ kotlin {
         }
         val iosMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-ios:1.5.1")
+                implementation("io.ktor:ktor-client-ios:1.6.7")
             }
         }
 //        val iosTest by getting
@@ -78,11 +78,11 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion(31)
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdkVersion(26)
-        targetSdkVersion(30)
+        targetSdkVersion(31)
         versionCode = 1
         versionName = "1.0"
     }
