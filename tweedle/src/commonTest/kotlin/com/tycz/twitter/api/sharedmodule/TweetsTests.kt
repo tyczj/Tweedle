@@ -14,39 +14,41 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class AuthenticationTests {
+class TweetsTests {
 
     val apiKey = ""
     val apiSecret = ""
     val oauthKey = ""
     val oauthSecret = ""
 
+    @OptIn(ExperimentalApi::class)
+    lateinit var oauth: OAuth1
+    lateinit var tweetsLookup: TweetsLookup
+
+    @OptIn(ExperimentalApi::class)
     @BeforeTest
+    fun before(){
+        oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+        tweetsLookup = TweetsLookup(oauth)
+    }
 
     @ExperimentalApi
     @Test
-    fun testSingleTweetOAuth1() = runBlocking{
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
-
-        val tweetLookup = TweetsLookup(oauth)
-        val response: Response<SingleTweetPayload?> = tweetLookup.getTweet(1299418846990921728)
+    fun testSingleTweet() = runBlocking{
+        val response: Response<SingleTweetPayload?> = tweetsLookup.getTweet(1299418846990921728)
         assertTrue(response is Response.Success)
     }
 
     @ExperimentalApi
     @Test
-    fun testMultipleTweetsOAuth1() = runBlocking {
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
-
-        val tweetLookup = TweetsLookup(oauth)
-        val response: Response<MultipleTweetPayload?> = tweetLookup.getMultipleTweets(mutableListOf(1299418846990921728, 1387852271938150408))
+    fun testMultipleTweets() = runBlocking {
+        val response: Response<MultipleTweetPayload?> = tweetsLookup.getMultipleTweets(mutableListOf(1299418846990921728, 1387852271938150408))
         assertTrue(response is Response.Success)
     }
 
     @ExperimentalApi
     @Test
-    fun testRecentTweetsOAuth1() = runBlocking {
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+    fun testRecentTweets() = runBlocking {
 
         val map = HashMap<String, String>()
         map["tweet.fields"] = "lang"
@@ -57,8 +59,7 @@ class AuthenticationTests {
             .addOperator("from:TwitterDev")
             .build()
 
-        val tweetLookup = TweetsLookup(oauth)
-        val response:Response<MultipleTweetPayload?> = tweetLookup.getRecentTweets(filter.filter,map)
+        val response: Response<MultipleTweetPayload?> = tweetsLookup.getRecentTweets(filter.filter,map)
         assertTrue(response is Response.Success)
     }
 

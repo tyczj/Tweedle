@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "32.0.0"
 
     defaultConfig {
         applicationId "com.tycz.android.twitter.api.v2"
