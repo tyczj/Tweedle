@@ -271,7 +271,9 @@ implementation("io.github.tyczj:tweedle:0.5.0")
 Android
 ```kotlin
 android{
-    debug { matchingFallbacks = ['release'] }
+    buildTypes {
+        debug { matchingFallbacks = ['release'] } 
+    }
 }
 
 implementation 'io.github.tyczj:tweedle-android:0.5.0'

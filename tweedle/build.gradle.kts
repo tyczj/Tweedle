@@ -6,7 +6,6 @@ plugins {
     id("kotlinx-serialization")
     id("maven-publish")
     id("signing")
-    id("org.jetbrains.dokka") version "1.6.10"
 }
 
 repositories {
@@ -20,7 +19,7 @@ val javadocJar by tasks.registering(Jar::class) {
 }
 
 group = "io.github.tyczj"
-version = "0.5.2"
+version = "0.5.1"
 
 kotlin {
     android{
@@ -92,7 +91,7 @@ android {
     }
 
     packagingOptions {
-        excludes.add("META-INF/*.kotlin_module")
+        resources.excludes.add("META-INF/*.kotlin_module")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
