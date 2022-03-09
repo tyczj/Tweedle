@@ -1,8 +1,11 @@
 # Tweedle
 
-***Library is currently in alpha and the API might change as the Twitter v2 API changes***
-
 [![v2](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api)
+![version](https://img.shields.io/badge/version-0.5.1-blue)
+<a href="https://twitter.com/tyczj" alt="Twitter">
+<img src="https://img.shields.io/twitter/follow/tyczj?style=social" /></a>
+
+***Library is currently in alpha and the API might change as the Twitter v2 API changes***
 
 Tweedle is an Android library built around the [Twitter v2 API](https://developer.twitter.com/en/docs/twitter-api/early-access) built fully in Kotlin using Kotlin Coroutines
 
@@ -265,7 +268,7 @@ To start using Tweedle, include the dependency in your `build.gradle`
 
 Common
 ```kotlin
-implementation("io.github.tyczj:tweedle:0.5.0")
+implementation("io.github.tyczj:tweedle:0.5.1")
 ```
 
 Android
@@ -276,5 +279,5 @@ android{
     }
 }
 
-implementation 'io.github.tyczj:tweedle-android:0.5.0'
+implementation 'io.github.tyczj:tweedle-android:0.5.1'
 ```
