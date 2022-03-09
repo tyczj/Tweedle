@@ -16,11 +16,9 @@ class UserEndpointsTests {
     val oauthKey = ""
     val oauthSecret = ""
 
-    @OptIn(ExperimentalApi::class)
     lateinit var oauth: OAuth1
     lateinit var userLookup: UserEndpoints
 
-    @OptIn(ExperimentalApi::class)
     @BeforeTest
     fun before(){
         oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)

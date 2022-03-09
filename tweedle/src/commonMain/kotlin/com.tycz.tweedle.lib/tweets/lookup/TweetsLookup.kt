@@ -1,6 +1,5 @@
 package com.tycz.tweedle.lib.tweets.lookup
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.api.TwitterClient
 import com.tycz.tweedle.lib.authentication.SignatureBuilder
@@ -29,7 +28,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
      * @see com.tycz.tweedle.lib.api.Response
      */
-    @ExperimentalApi
     suspend fun getTweet(tweetId:Long): Response<SingleTweetPayload?>{
 
         return try{
@@ -58,7 +56,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
      * @see com.tycz.tweedle.lib.api.Response
      */
-    @ExperimentalApi
     suspend fun getMultipleTweets(tweetIds:List<Long>): Response<MultipleTweetPayload?> {
 
         return try{
@@ -102,7 +99,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @return
      */
     @OptIn(ExperimentalSerializationApi::class)
-    @ExperimentalApi
     suspend fun hideTweet(tweetId:Long):Response<HttpResponse?> {
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
@@ -130,7 +126,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @return
      */
     @OptIn(ExperimentalSerializationApi::class)
-    @ExperimentalApi
     suspend fun unhideTweet(tweetId:Long):Response<HttpResponse?> {
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
@@ -160,7 +155,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
      * @see com.tycz.tweedle.lib.api.Response
      */
-    @ExperimentalApi
     suspend fun getRecentTweets(query:String, additionalParameters:Map<String,String>):Response<MultipleTweetPayload?> {
 
         return try{

@@ -1,6 +1,5 @@
 package com.tycz.twitter.api.sharedmodule
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.authentication.oauth.OAuth1
 import com.tycz.tweedle.lib.authentication.oauth.OAuth2Bearer
@@ -16,7 +15,6 @@ class LikesTests {
     val oauthKey = ""
     val oauthSecret = ""
 
-    @OptIn(ExperimentalApi::class)
     @Test
     fun getUserLikesTest() = runBlocking {
         val parameters = hashMapOf("user.fields" to "created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld",
@@ -27,7 +25,6 @@ class LikesTests {
         assertTrue(response is Response.Success)
     }
 
-    @OptIn(ExperimentalApi::class)
     @Test
     fun getLikesForTweet() = runBlocking {
         val parameters = hashMapOf("user.fields" to "created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld",

@@ -1,6 +1,5 @@
 package com.tycz.tweedle.lib.tweets.likes
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.api.TwitterClient
 import com.tycz.tweedle.lib.authentication.SignatureBuilder
@@ -19,7 +18,6 @@ class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
 
     private val _client = TwitterClient.instance
 
-    @OptIn(ExperimentalApi::class)
     suspend fun getLikesForTweet(tweetId: Long, additionalParameters:Map<String,String> = mapOf()): Response<LikingUserPayload?> {
         return try{
             val urlBuilder = StringBuilder()
@@ -57,7 +55,6 @@ class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    @OptIn(ExperimentalApi::class)
     suspend fun getUserLikedTweets(userId: Long, additionalParameters:Map<String,String> = mapOf()):Response<MultipleTweetPayload?>{
         return try{
             val urlBuilder = StringBuilder()
@@ -95,7 +92,6 @@ class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    @OptIn(ExperimentalApi::class)
     suspend fun likeTweet(tweetId: Long, userId: Long):Response<LikesPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/likes"
@@ -114,7 +110,6 @@ class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    @OptIn(ExperimentalApi::class)
     suspend fun unlikeTweet(tweetId: Long, userId: Long):Response<LikesPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/likes/$tweetId"

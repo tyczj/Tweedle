@@ -6,6 +6,7 @@ plugins {
     id("kotlinx-serialization")
     id("maven-publish")
     id("signing")
+    id("org.jetbrains.dokka") version "1.6.10"
 }
 
 repositories {
@@ -19,7 +20,7 @@ val javadocJar by tasks.registering(Jar::class) {
 }
 
 group = "io.github.tyczj"
-version = "0.5.1"
+version = "0.5.2"
 
 kotlin {
     android{
@@ -78,13 +79,11 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = 31
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(26)
-        targetSdkVersion(31)
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 26
+        targetSdk = 31
     }
     buildTypes {
         getByName("release") {

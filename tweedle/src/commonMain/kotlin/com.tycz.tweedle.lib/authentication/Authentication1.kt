@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 /**
  * Class for authenticating with twitter
  */
-class Authentication1 @ExperimentalApi constructor(private val oAuth: OAuth1) {
+class Authentication1 constructor(private val oAuth: OAuth1) {
     private val _client = TwitterClient.instance
 
     /**
@@ -22,7 +22,6 @@ class Authentication1 @ExperimentalApi constructor(private val oAuth: OAuth1) {
      * @param callbackUrl The value you specify here will be used as the URL a user is redirected to should they approve your application's access to their account.
      * callback URL used with this endpoint will have to be configured within the App’s settings on developer.twitter.com
      */
-    @ExperimentalApi
     suspend fun requestToken(callbackUrl: String):TokenResponse = withContext(Dispatchers.Default){
 
         oAuth.callbackUrl = callbackUrl

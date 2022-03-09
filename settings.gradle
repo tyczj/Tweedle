@@ -1,4 +1,4 @@
 include ':tweedle'
 include ':app'
 rootProject.name = "tweedle"
-enableFeaturePreview('GRADLE_METADATA')
+//enableFeaturePreview('GRADLE_METADATA')
