@@ -370,6 +370,7 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The authenticated user ID who you would like to initiate the follow on behalf of
      * @param userIdToFollow The user ID of the user that you would like the id to follow.
+     * @throws IllegalStateException when called with OAuth1 scope
      */
     internal suspend fun followUser(userId: Long, userIdToFollow: Long): Response<FollowingPayload?>{
         return try {
@@ -397,6 +398,7 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The user ID of the user that you would like the id to follow.
      * @param userIdToUnfollow The user ID of the user that you would like the to unfollow.
+     * @throws IllegalStateException when called with OAuth1 scope
      */
     suspend fun unfollowUser(userId: Long, userIdToUnfollow: Long): Response<FollowingPayload?>{
         return try {
@@ -460,6 +462,7 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId User ID to perform the block on behalf of
      * @param userIdToBlock User ID to block
+     * @throws IllegalStateException when called with OAuth1 scope
      * @return
      */
     suspend fun blockUser(userId: Long, userIdToBlock: Long): Response<BlockingPayload?> {
@@ -488,6 +491,7 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId User ID to perform the unblock on behalf of
      * @param userIdToUnblock User ID to unblock
+     * @throws IllegalStateException when called with OAuth1 scope
      * @return
      */
     suspend fun unblockUser(userId: Long, userIdToUnblock: Long): Response<BlockingPayload?>{
@@ -553,7 +557,7 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The user ID who you would like to initiate the mute on behalf of.
      * @param userIdToMute The user ID of the user that you would like to mute
-     * @return
+     * @throws IllegalStateException when called with OAuth1 scope
      */
     suspend fun muteUser(userId: Long, userIdToMute: Long): Response<MutedPayload?> {
         return try {
@@ -575,9 +579,9 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
 
     /**
      * Unmute user
+     *
      * @param userId The user ID who you would like to initiate an unmute on behalf of.
      * @param userIdToUnmute The user ID of the user that you would like to unmute.
-     * @return
      */
     suspend fun unmuteUser(userId: Long, userIdToUnmute: Long): Response<MutedPayload?>{
         return try {

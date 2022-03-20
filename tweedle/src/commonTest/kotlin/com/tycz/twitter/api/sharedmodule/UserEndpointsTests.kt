@@ -116,14 +116,16 @@ class UserEndpointsTests {
     fun blockUserTest() = runBlocking {
         val oauth = OAuth2Bearer("")
         userLookup = UserEndpoints(oauth)
-        userLookup.blockUser(0,0)
+        val response = userLookup.blockUser(146633079,2244994945)
+        assertTrue(response is Response.Success)
     }
 
     @Test
     fun unblockUserTest() = runBlocking {
         val oauth = OAuth2Bearer("")
         userLookup = UserEndpoints(oauth)
-        userLookup.unblockUser(0, 0)
+        val response = userLookup.unblockUser(146633079, 2244994945)
+        assertTrue(response is Response.Success)
     }
 
     @Test
@@ -162,6 +164,26 @@ class UserEndpointsTests {
     fun userMutesTest() = runBlocking {
         val userId = 0
         val response = userLookup.getMutedUsers(userId.toLong())
+        assertTrue(response is Response.Success)
+    }
+
+    @Test
+    fun muteUser() = runBlocking {
+        val oauth = OAuth2Bearer("")
+        userLookup = UserEndpoints(oauth)
+        val userId = 146633079
+        val userToMute = 2244994945
+        val response = userLookup.muteUser(userId.toLong(), userToMute)
+        assertTrue(response is Response.Success)
+    }
+
+    @Test
+    fun unmuteUser() = runBlocking {
+        val oauth = OAuth2Bearer("")
+        userLookup = UserEndpoints(oauth)
+        val userId = 146633079
+        val userToUnMute = 2244994945
+        val response = userLookup.unmuteUser(userId.toLong(), userToUnMute)
         assertTrue(response is Response.Success)
     }
 

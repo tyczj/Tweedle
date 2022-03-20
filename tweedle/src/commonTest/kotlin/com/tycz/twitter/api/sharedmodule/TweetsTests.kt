@@ -79,4 +79,10 @@ class TweetsTests {
         val response = auth.refreshToken("")
         assertTrue(response is Response.Success)
     }
+
+    @Test
+    fun testQuotes() = runBlocking {
+        val response = tweetsLookup.getQuotesForTweet(1460323737035677698)
+        assertTrue(response is Response.Success)
+    }
 }
