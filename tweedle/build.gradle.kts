@@ -111,8 +111,10 @@ afterEvaluate {
                 name = "sonatype"
                 url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 credentials {
-                    username = rootProject.ext["ossrhUsername"]?.toString()
-                    password = rootProject.ext["ossrhPassword"]?.toString()
+                    val ossrhUsername = System.getenv("OSSRH_USERNAME") ?: rootProject.ext["ossrhUsername"]?.toString()
+                    val ossrhPassword = System.getenv("OSSRH_PASSWORD") ?: rootProject.ext["ossrhPassword"]?.toString()
+                    username = ossrhUsername
+                    password = ossrhPassword
                 }
             }
         }
@@ -163,10 +165,24 @@ val packForXcode by tasks.creating(Sync::class) {
 }
 tasks.getByName("build").dependsOn(packForXcode)
 
-ext["signing.keyId"] = rootProject.ext["signing.keyId"]?.toString()
-ext["signing.password"] = rootProject.ext["signing.password"]?.toString()
-ext["signing.secretKeyRingFile"] = rootProject.ext["signing.secretKeyRingFile"]?.toString()
-
 signing {
+    val signingKeyId = System.getenv("SIGNING_KEYID") ?: rootProject.ext["signing.keyId"]?.toString()
+    val signingPassword = System.getenv("SIGNING_PASSWORD") ?: rootProject.ext["signing.password"]?.toString()
+    val gpgPrivateKey = System.getenv("GPG_PRIVATE_KEY")
+    if(gpgPrivateKey != null){
+        useInMemoryPgpKeys(gpgPrivateKey,signingPassword)
+    }else{
+        ext["signing.keyId"] = signingKeyId
+        ext["signing.password"] = signingPassword
+        ext["signing.secretKeyRingFile"] = rootProject.ext["signing.secretKeyRingFile"]?.toString()
+    }
+
     sign(publishing.publications)
 }
+
+//Publishing
+/**
+ * Run gradle task Tweedle:tweedle [publish]
+ * Go to https://s01.oss.sonatype.org and close the publish under Staging Repositories
+ * Once closed click Release
+ */
