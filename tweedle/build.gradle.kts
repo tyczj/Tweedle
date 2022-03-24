@@ -179,10 +179,3 @@ signing {
 
     sign(publishing.publications)
 }
-
-//Publishing
-/**
- * Run gradle task Tweedle:tweedle [publish]
- * Go to https://s01.oss.sonatype.org and close the publish under Staging Repositories
- * Once closed click Release
- */
