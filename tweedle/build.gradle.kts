@@ -170,7 +170,9 @@ signing {
     val signingPassword = System.getenv("SIGNING_PASSWORD") ?: rootProject.ext["signing.password"]?.toString()
     val gpgPrivateKey = System.getenv("GPG_PRIVATE_KEY")
     if(gpgPrivateKey != null){
-        useInMemoryPgpKeys(gpgPrivateKey,signingPassword)
+        val signingKey: String? by project
+        val signingPassword: String? by project
+        useInMemoryPgpKeys(signingKey,signingPassword)
     }else{
         ext["signing.keyId"] = signingKeyId
         ext["signing.password"] = signingPassword

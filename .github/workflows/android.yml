@@ -29,6 +29,8 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SONATYPESTAGINGPROFILEID: ${{ secrets.SONATYPESTAGINGPROFILEID }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD  }}
       - name: Build with Gradle
         run: ./gradlew tweedle:build -x test
       - name: Publish Library
