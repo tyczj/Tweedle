@@ -124,6 +124,7 @@ afterEvaluate {
             artifact(javadocJar.get())
 
             pom{
+                group = "io.github.tyczj"
                 name.set("Tweedle")
                 description.set("Tweedle is an Android library built around the Twitter v2 API built fully in Kotlin using Kotlin Coroutines")
                 url.set("https://github.com/tyczj/Tweedle")
