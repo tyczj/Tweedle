@@ -1,6 +1,6 @@
 ext["signing.keyId"] = ''
 ext["signing.password"] = ''
-//ext["signing.secretKeyRingFile"] = ''
+ext["signing.secretKeyRingFile"] = ''
 ext["ossrhUsername"] = ''
 ext["ossrhPassword"] = ''
 ext["sonatypeStagingProfileId"] = ''
