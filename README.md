@@ -1,6 +1,7 @@
 # Tweedle
 
 [![v2](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api)
+![build](https://github.com/tyczj/Tweedle/actions/workflows/android.yml/badge.svg)
 ![version](https://img.shields.io/badge/version-0.5.1-blue)
 <a href="https://twitter.com/tyczj" alt="Twitter">
 <img src="https://img.shields.io/twitter/follow/tyczj?style=social" /></a>
@@ -89,6 +90,10 @@ _tweetStream.startTweetStream().collect {
 ```
 
 Collect is called every time a new tweet is received
+
+### Authentication
+To read about how to authenticate with the api see [authentication](https://github.com/tyczj/Tweedle/blob/master/tweedle/src/commonMain/kotlin/com.tycz.tweedle.lib/authentication)
+
 
 To start using Tweedle, include the dependency in your `build.gradle`
 
