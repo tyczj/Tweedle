@@ -1,6 +1,5 @@
 package com.tycz.tweedle.lib.authentication.oauth
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.authentication.SignatureBuilder
 import com.tycz.tweedle.lib.authentication.SignatureParams
 import com.tycz.tweedle.lib.urlEncodeString
@@ -8,7 +7,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.http.auth.*
 
-@ExperimentalApi
 open class OAuth1(private val key: String, private val secret: String, private val oAuthToken: String?, private val oAuthSecret: String?): IOAuthBuilder {
 
     private val _signatureBuilder = SignatureBuilder()

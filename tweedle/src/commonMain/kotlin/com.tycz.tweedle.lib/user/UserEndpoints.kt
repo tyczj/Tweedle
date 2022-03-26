@@ -1,6 +1,5 @@
 package com.tycz.tweedle.lib.user
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.api.TwitterClient
 import com.tycz.tweedle.lib.authentication.SignatureBuilder
@@ -34,7 +33,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      *
      * @return Returns a user Payload in a Response
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getUserById(userId:Long, additionalParameters:Map<String,String> = mapOf()):Response<UserPayload?> {
 
         return try{
@@ -79,7 +77,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @param userId User to get the tweet timeline for
      * @param additionalParameters Parameters for the query and data returned
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getUserTimeline(userId:Long, additionalParameters:Map<String,String> = mapOf()): Response<MultipleTweetPayload?>{
         return try{
             val urlBuilder = StringBuilder()
@@ -123,7 +120,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @param userId User to get all the mentions for
      * @param additionalParameters Parameters for the query and data returned
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getUserMentions(userId:Long, additionalParameters:Map<String,String> = mapOf()): Response<MultipleTweetPayload?>{
         return try{
             val urlBuilder = StringBuilder()
@@ -167,7 +163,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      *
      * @return Returns a list of user Payload's in a Response
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getUsersByIds(userIds:List<Long>, additionalParameters:Map<String,String> = mapOf()):Response<Payload?> {
 
         return try{
@@ -212,7 +207,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      *
      * @return Returns a user Payload in a Response
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getUserByUsername(username:String, additionalParameters:Map<String,String> = mapOf()): Response<UserPayload?> {
 
         return try{
@@ -256,7 +250,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      *
      * @return Returns a list of user Payload's in a Response
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getUsersByUsernames(usernames:List<String>, additionalParameters:Map<String,String> = mapOf()): Response<Payload?>{
 
         return try{
@@ -299,7 +292,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      *
      * @param userId User id to get the followers for
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getFollowers(userId: Long): Response<FollowersPayload?>{
         return try {
             val urlBuilder = StringBuilder()
@@ -337,7 +329,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      *
      * @param userId User id to get all the users following that id
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getFollowing(userId: Long): Response<FollowersPayload?>{
         return try {
             val urlBuilder = StringBuilder()
@@ -379,8 +370,8 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The authenticated user ID who you would like to initiate the follow on behalf of
      * @param userIdToFollow The user ID of the user that you would like the id to follow.
+     * @throws IllegalStateException when called with OAuth1 scope
      */
-    @OptIn(ExperimentalApi::class)
     internal suspend fun followUser(userId: Long, userIdToFollow: Long): Response<FollowingPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/following"
@@ -407,8 +398,8 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The user ID of the user that you would like the id to follow.
      * @param userIdToUnfollow The user ID of the user that you would like the to unfollow.
+     * @throws IllegalStateException when called with OAuth1 scope
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun unfollowUser(userId: Long, userIdToUnfollow: Long): Response<FollowingPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/following/$userIdToUnfollow"
@@ -426,7 +417,11 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    @OptIn(ExperimentalApi::class)
+    /**
+     * Get blocked users for a user
+     *
+     * @param userId User ID to get the blocked users for
+     */
     suspend fun getBlockedUsers(userId: Long): Response<BlockedPayload?> {
         return try {
             val urlBuilder = StringBuilder()
@@ -467,9 +462,9 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId User ID to perform the block on behalf of
      * @param userIdToBlock User ID to block
+     * @throws IllegalStateException when called with OAuth1 scope
      * @return
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun blockUser(userId: Long, userIdToBlock: Long): Response<BlockingPayload?> {
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/blocking"
@@ -496,9 +491,9 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId User ID to perform the unblock on behalf of
      * @param userIdToUnblock User ID to unblock
+     * @throws IllegalStateException when called with OAuth1 scope
      * @return
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun unblockUser(userId: Long, userIdToUnblock: Long): Response<BlockingPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/blocking/$userIdToUnblock"
@@ -522,7 +517,6 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @param userId The user ID whose muted users you would like to retrieve.
      * @return Returns a list of users who are muted by the specified user ID.
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun getMutedUsers(userId: Long): Response<MutingPayload?> {
         return try {
             val urlBuilder = StringBuilder()
@@ -563,9 +557,8 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
      * @param userId The user ID who you would like to initiate the mute on behalf of.
      * @param userIdToMute The user ID of the user that you would like to mute
-     * @return
+     * @throws IllegalStateException when called with OAuth1 scope
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun muteUser(userId: Long, userIdToMute: Long): Response<MutedPayload?> {
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/muting"
@@ -586,11 +579,10 @@ class UserEndpoints(private val oAuthBuilder: IOAuthBuilder) {
 
     /**
      * Unmute user
+     *
      * @param userId The user ID who you would like to initiate an unmute on behalf of.
      * @param userIdToUnmute The user ID of the user that you would like to unmute.
-     * @return
      */
-    @OptIn(ExperimentalApi::class)
     suspend fun unmuteUser(userId: Long, userIdToUnmute: Long): Response<MutedPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/muting/$userIdToUnmute"

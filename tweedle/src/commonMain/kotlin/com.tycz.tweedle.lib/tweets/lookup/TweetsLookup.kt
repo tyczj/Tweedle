@@ -1,6 +1,5 @@
 package com.tycz.tweedle.lib.tweets.lookup
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.api.TwitterClient
 import com.tycz.tweedle.lib.authentication.SignatureBuilder
@@ -16,6 +15,11 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
+/**
+ * Class used to query tweets in the Twitter API
+ *
+ * @property oAuthBuilder The authentication method to be used to make API calls
+ */
 class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
 
     private val _client = TwitterClient.instance
@@ -29,7 +33,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.dtos.tweet.SingleTweetPayload
      * @see com.tycz.tweedle.lib.api.Response
      */
-    @ExperimentalApi
     suspend fun getTweet(tweetId:Long): Response<SingleTweetPayload?>{
 
         return try{
@@ -58,7 +61,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
      * @see com.tycz.tweedle.lib.api.Response
      */
-    @ExperimentalApi
     suspend fun getMultipleTweets(tweetIds:List<Long>): Response<MultipleTweetPayload?> {
 
         return try{
@@ -97,12 +99,11 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      *
      * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
-     * @throws IllegalStateException
+     * @throws IllegalStateException when called with OAuth1 scope
      * @param tweetId ID of the tweet to hide
      * @return
      */
     @OptIn(ExperimentalSerializationApi::class)
-    @ExperimentalApi
     suspend fun hideTweet(tweetId:Long):Response<HttpResponse?> {
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
@@ -125,12 +126,11 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      *
      * Note this currently only works with OAuth2 bearer token authentication. If trying to use OAuth1 an exception will be thrown
      * @see com.tycz.tweedle.lib.authentication.Authentication2 usage to perform actions on behalf of a user
-     * @throws IllegalStateException
+     * @throws IllegalStateException when called with OAuth1 scope
      * @param tweetId ID of the tweet to unhide
      * @return
      */
     @OptIn(ExperimentalSerializationApi::class)
-    @ExperimentalApi
     suspend fun unhideTweet(tweetId:Long):Response<HttpResponse?> {
         return try{
             val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/hidden"
@@ -160,7 +160,6 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
      * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
      * @see com.tycz.tweedle.lib.api.Response
      */
-    @ExperimentalApi
     suspend fun getRecentTweets(query:String, additionalParameters:Map<String,String>):Response<MultipleTweetPayload?> {
 
         return try{
@@ -187,6 +186,56 @@ class TweetsLookup(private val oAuthBuilder: IOAuthBuilder) {
                 urlBuilder.append("${entry.key}=${urlEncodeString(entry.value)}")
                 if(index < parameters.size-1){
                     urlBuilder.append("&")
+                }
+            }
+
+            val builder = oAuthBuilder.buildRequest()
+            builder.url(URLBuilder(urlBuilder.toString()).build())
+
+            val response = _client.get<MultipleTweetPayload>(builder)
+            Response.Success(response)
+        }catch (e:Exception){
+            Response.Error(e)
+        }
+    }
+
+    /**
+     * Gets all the quotes of a specific tweet
+     * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/quote-tweets/api-reference/get-tweets-id-quote_tweets">Quotes</a>
+     *
+     * @param tweetId ID of the tweet to get all the quotes for
+     * @param additionalParameters Additional fields to be returned for extra information not in the query
+     * @return Returns a MultipleTweetPayload in a Response
+     *
+     * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
+     * @see com.tycz.tweedle.lib.api.Response
+     */
+    suspend fun getQuotesForTweet(tweetId: Long, additionalParameters:Map<String,String> = mapOf()):Response<MultipleTweetPayload?>{
+        return try {
+            val urlBuilder = StringBuilder()
+
+            val url = "${TwitterClient.BASE_URL}${TwitterClient.TWEETS_ENDPOINT}/$tweetId/quote_tweets"
+            urlBuilder.append(url)
+
+            val parameters = HashMap<String, String>()
+
+            additionalParameters.forEach {
+                parameters[it.key] = it.value
+            }
+
+            if(oAuthBuilder is OAuth1){
+                oAuthBuilder.httpMethod = SignatureBuilder.HTTP_GET
+                oAuthBuilder.url = urlBuilder.toString()
+                oAuthBuilder.parameters = parameters
+            }
+
+            if(parameters.isNotEmpty()){
+                urlBuilder.append("?")
+                parameters.onEachIndexed{index, entry ->
+                    urlBuilder.append("${entry.key}=${urlEncodeString(entry.value)}")
+                    if(index < parameters.size-1){
+                        urlBuilder.append("&")
+                    }
                 }
             }
 

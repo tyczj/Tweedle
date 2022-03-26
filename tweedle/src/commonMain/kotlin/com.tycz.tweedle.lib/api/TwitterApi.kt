@@ -60,13 +60,13 @@ internal class TwitterClient private constructor() {
         val response = _client.get<HttpResponse>(builder)
 
         when (response.status.value) {
-            in 300..399 -> throw RedirectResponseException(response)
-            in 400..499 -> throw ClientRequestException(response)
-            in 500..599 -> throw ServerResponseException(response)
+            in 300..399 -> throw RedirectResponseException(response, response.readText())
+            in 400..499 -> throw ClientRequestException(response, response.readText())
+            in 500..599 -> throw ServerResponseException(response, response.readText())
         }
 
         if (response.status.value >= 600) {
-            throw ResponseException(response)
+            throw ResponseException(response, response.readText())
         }
 
         return response.receive<T>()
@@ -94,13 +94,13 @@ internal class TwitterClient private constructor() {
         val response = _client.post<HttpResponse>(builder)
 
         when (response.status.value) {
-            in 300..399 -> throw RedirectResponseException(response)
-            in 400..499 -> throw ClientRequestException(response)
-            in 500..599 -> throw ServerResponseException(response)
+            in 300..399 -> throw RedirectResponseException(response, response.readText())
+            in 400..499 -> throw ClientRequestException(response, response.readText())
+            in 500..599 -> throw ServerResponseException(response, response.readText())
         }
 
         if (response.status.value >= 600) {
-            throw ResponseException(response)
+            throw ResponseException(response, response.readText())
         }
 
         return response.receive<T>()
@@ -117,13 +117,13 @@ internal class TwitterClient private constructor() {
         val response = _client.delete<HttpResponse>(builder)
 
         when (response.status.value) {
-            in 300..399 -> throw RedirectResponseException(response)
-            in 400..499 -> throw ClientRequestException(response)
-            in 500..599 -> throw ServerResponseException(response)
+            in 300..399 -> throw RedirectResponseException(response, response.readText())
+            in 400..499 -> throw ClientRequestException(response, response.readText())
+            in 500..599 -> throw ServerResponseException(response, response.readText())
         }
 
         if (response.status.value >= 600) {
-            throw ResponseException(response)
+            throw ResponseException(response, response.readText())
         }
 
         return response.receive<T>()
@@ -140,13 +140,13 @@ internal class TwitterClient private constructor() {
         val response = _client.put<HttpResponse>(builder)
 
         when (response.status.value) {
-            in 300..399 -> throw RedirectResponseException(response)
-            in 400..499 -> throw ClientRequestException(response)
-            in 500..599 -> throw ServerResponseException(response)
+            in 300..399 -> throw RedirectResponseException(response, response.readText())
+            in 400..499 -> throw ClientRequestException(response, response.readText())
+            in 500..599 -> throw ServerResponseException(response, response.readText())
         }
 
         if (response.status.value >= 600) {
-            throw ResponseException(response)
+            throw ResponseException(response, response.readText())
         }
 
         return response.receive<T>()

@@ -15,7 +15,7 @@ import com.tycz.tweedle.lib.dtos.tweet.rules.RuleResponse
 import com.tycz.tweedle.lib.dtos.user.Payload
 import com.tycz.tweedle.lib.dtos.user.UserPayload
 import com.tycz.tweedle.lib.tweets.lookup.TweetsLookup
-import com.tycz.tweedle.lib.user.UserLookup
+import com.tycz.tweedle.lib.user.UserEndpoints
 import com.tycz.tweedle.lib.tweets.stream.TweetsStream
 import kotlinx.coroutines.launch
 
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 class MainViewModel: ViewModel() {
 
     private lateinit var _tweetLookup:TweetsLookup
-    private lateinit var _userLookup: UserLookup
+    private lateinit var _userLookup: UserEndpoints
     private lateinit var _tweetStream:TweetsStream
     private lateinit var _authentication:Authentication1
     private lateinit var _authentication2: Authentication2
@@ -39,7 +39,7 @@ class MainViewModel: ViewModel() {
         set(value) {
             value?.let {
                 _tweetLookup = TweetsLookup(value)
-                _userLookup = UserLookup(value)
+                _userLookup = UserEndpoints(value)
             }
         }
     var oAuth2: OAuth2Bearer? = null

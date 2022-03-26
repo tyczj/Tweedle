@@ -1,6 +1,5 @@
 package com.tycz.tweedle.lib.tweets.likes
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.api.TwitterClient
 import com.tycz.tweedle.lib.authentication.SignatureBuilder
@@ -15,11 +14,25 @@ import io.ktor.http.*
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
+/**
+ * Class used for interfacing with the likes Twitter API
+ *
+ * @property oAuthBuilder The authentication method to be used to make API calls
+ */
 class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
 
     private val _client = TwitterClient.instance
 
-    @OptIn(ExperimentalApi::class)
+    /**
+     * Gets likes for a tweet
+     *
+     * @param tweetId Tweet id to get likes for
+     * @param additionalParameters Additional fields to be returned for extra information not in the query
+     * @return Returns a LikingUserPayload in a Response
+     *
+     * @see com.tycz.tweedle.lib.dtos.user.likes.LikingUserPayload
+     * @see com.tycz.tweedle.lib.api.Response
+     */
     suspend fun getLikesForTweet(tweetId: Long, additionalParameters:Map<String,String> = mapOf()): Response<LikingUserPayload?> {
         return try{
             val urlBuilder = StringBuilder()
@@ -57,7 +70,17 @@ class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    @OptIn(ExperimentalApi::class)
+    /**
+     * Gets all a users likes
+     *
+     * @param userId User id to get likes for
+     * @param additionalParameters Additional fields to be returned for extra information not in the query
+     *
+     * @return Returns a MultipleTweetPayload in a Response
+     *
+     * @see com.tycz.tweedle.lib.dtos.tweet.MultipleTweetPayload
+     * @see com.tycz.tweedle.lib.api.Response
+     */
     suspend fun getUserLikedTweets(userId: Long, additionalParameters:Map<String,String> = mapOf()):Response<MultipleTweetPayload?>{
         return try{
             val urlBuilder = StringBuilder()
@@ -95,7 +118,18 @@ class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    @OptIn(ExperimentalApi::class)
+    /**
+     * Likes a tweet
+     *
+     * @param tweetId Tweet id to like
+     * @param userId User id of the user liking the tweet
+     *
+     * @throws IllegalStateException when called with OAuth1 scope
+     *
+     * @return Returns a payload on if the tweet was liked or not
+     *
+     * @see com.tycz.tweedle.lib.dtos.user.likes.LikesPayload
+     */
     suspend fun likeTweet(tweetId: Long, userId: Long):Response<LikesPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/likes"
@@ -114,7 +148,17 @@ class TweetLikes(private val oAuthBuilder: IOAuthBuilder) {
         }
     }
 
-    @OptIn(ExperimentalApi::class)
+    /**
+     * Unlikes a tweet
+     *
+     * @param tweetId Tweet id to like
+     * @param userId User id of the user liking the tweet
+     * @throws IllegalStateException when called with OAuth1 scope
+     *
+     * @return Returns a payload on if the tweet was liked or not
+     *
+     * @see com.tycz.tweedle.lib.dtos.user.likes.LikesPayload
+     */
     suspend fun unlikeTweet(tweetId: Long, userId: Long):Response<LikesPayload?>{
         return try {
             val url = "${TwitterClient.BASE_URL}${TwitterClient.USERS_ENDPOINT}/$userId/likes/$tweetId"

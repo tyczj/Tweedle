@@ -1,6 +1,5 @@
 package com.tycz.twitter.api.sharedmodule
 
-import com.tycz.tweedle.lib.ExperimentalApi
 import com.tycz.tweedle.lib.api.Response
 import com.tycz.tweedle.lib.authentication.Authentication2
 import com.tycz.tweedle.lib.authentication.oauth.OAuth1
@@ -14,39 +13,36 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class AuthenticationTests {
+class TweetsTests {
 
     val apiKey = ""
     val apiSecret = ""
     val oauthKey = ""
     val oauthSecret = ""
 
+    lateinit var oauth: OAuth1
+    lateinit var tweetsLookup: TweetsLookup
+
     @BeforeTest
+    fun before(){
+        oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+        tweetsLookup = TweetsLookup(oauth)
+    }
 
-    @ExperimentalApi
     @Test
-    fun testSingleTweetOAuth1() = runBlocking{
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
-
-        val tweetLookup = TweetsLookup(oauth)
-        val response: Response<SingleTweetPayload?> = tweetLookup.getTweet(1299418846990921728)
+    fun testSingleTweet() = runBlocking{
+        val response: Response<SingleTweetPayload?> = tweetsLookup.getTweet(1299418846990921728)
         assertTrue(response is Response.Success)
     }
 
-    @ExperimentalApi
     @Test
-    fun testMultipleTweetsOAuth1() = runBlocking {
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
-
-        val tweetLookup = TweetsLookup(oauth)
-        val response: Response<MultipleTweetPayload?> = tweetLookup.getMultipleTweets(mutableListOf(1299418846990921728, 1387852271938150408))
+    fun testMultipleTweets() = runBlocking {
+        val response: Response<MultipleTweetPayload?> = tweetsLookup.getMultipleTweets(mutableListOf(1299418846990921728, 1387852271938150408))
         assertTrue(response is Response.Success)
     }
 
-    @ExperimentalApi
     @Test
-    fun testRecentTweetsOAuth1() = runBlocking {
-        val oauth = OAuth1(apiKey, apiSecret, oauthKey, oauthSecret)
+    fun testRecentTweets() = runBlocking {
 
         val map = HashMap<String, String>()
         map["tweet.fields"] = "lang"
@@ -57,12 +53,10 @@ class AuthenticationTests {
             .addOperator("from:TwitterDev")
             .build()
 
-        val tweetLookup = TweetsLookup(oauth)
-        val response:Response<MultipleTweetPayload?> = tweetLookup.getRecentTweets(filter.filter,map)
+        val response: Response<MultipleTweetPayload?> = tweetsLookup.getRecentTweets(filter.filter,map)
         assertTrue(response is Response.Success)
     }
 
-    @ExperimentalApi
     @Test
     fun testHideTweetOAuth1() = runBlocking{
         val oauth = OAuth2Bearer("")
@@ -71,7 +65,6 @@ class AuthenticationTests {
         assertTrue(response is Response.Success)
     }
 
-    @ExperimentalApi
     @Test
     fun testUnHideTweetOAuth1() = runBlocking{
         val oauth = OAuth2Bearer("")
@@ -84,6 +77,12 @@ class AuthenticationTests {
     fun testRefreshToken() = runBlocking {
         val auth = Authentication2("", "")
         val response = auth.refreshToken("")
+        assertTrue(response is Response.Success)
+    }
+
+    @Test
+    fun testQuotes() = runBlocking {
+        val response = tweetsLookup.getQuotesForTweet(1460323737035677698)
         assertTrue(response is Response.Success)
     }
 }

@@ -57,6 +57,3 @@ actual fun generateHmacSha1Signature(key: String, value: String): String{
 //
 //    return data.base64EncodedStringWithOptions(NSDataBase64Encoding64CharacterLineLength)
 }
-actual fun testApi(): String{
-    return ""
-}
