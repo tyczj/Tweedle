@@ -6,6 +6,8 @@
 <a href="https://twitter.com/tyczj" alt="Twitter">
 <img src="https://img.shields.io/twitter/follow/tyczj?style=social" /></a>
 
+# Due to twitter going to a paid API this project is no longer going to be maintained. I am not paying $100/month for API access just to create a library that I wont be making any money on.
+
 ***Library is currently in alpha and the API might change as the Twitter v2 API changes***
 
 Tweedle is an Android library built around the [Twitter v2 API](https://developer.twitter.com/en/docs/twitter-api/early-access) built fully in Kotlin using Kotlin Coroutines
